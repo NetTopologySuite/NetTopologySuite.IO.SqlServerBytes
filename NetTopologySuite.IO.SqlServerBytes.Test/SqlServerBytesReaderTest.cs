@@ -165,12 +165,6 @@ namespace NetTopologySuite.IO
         }
 
         [Fact]
-        public void IsGeography_flips_x_and_y()
-        {
-
-        }
-
-        [Fact]
         public void Read_throws_when_circular_string()
         {
             var ex = Assert.Throws<GeoParseException>(

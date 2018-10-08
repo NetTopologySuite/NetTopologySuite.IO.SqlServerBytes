@@ -85,6 +85,18 @@ namespace NetTopologySuite.IO
             Assert.Equal(expected, Write(geometry));
         }
 
+        [Theory]
+        [InlineData(
+            "POINT (1 2)",
+            "E6100000010C0000000000000040000000000000F03F")]
+        public void Read_works_when_IsGeography(string wkt, string expected)
+        {
+            var geometry = new WKTReader().Read(wkt);
+            geometry.SRID = 4326;
+
+            Assert.Equal(expected, Write(geometry, isGeography: true));
+        }
+
         [Fact]
         public void Write_works_with_SRID()
         {
@@ -175,11 +187,12 @@ namespace NetTopologySuite.IO
                 () => reader.Read(wkt));
         }
 
-        private string Write(IGeometry geometry, Ordinates handleOrdinates = Ordinates.XYZM)
+        private string Write(IGeometry geometry, Ordinates handleOrdinates = Ordinates.XYZM, bool isGeography = false)
         {
             var writer = new SqlServerBytesWriter
             {
-                HandleOrdinates = handleOrdinates
+                HandleOrdinates = handleOrdinates,
+                IsGeography = isGeography
             };
 
             return string.Concat(writer.Write(geometry).Select(b => b.ToString("X2")));
