@@ -90,6 +90,12 @@ namespace NetTopologySuite.IO
         public virtual bool IsGeography { get; set; }
 
         /// <summary>
+        ///     Gets or sets a value indicating whether to skip the fixup of geography data. If true, the first ring of
+        ///     a geography polygon is used as the shell. Otherwise, the ring oriented counter-clockwise is used.
+        /// </summary>
+        public virtual bool SkipGeographyFixup { get; set; }
+
+        /// <summary>
         ///     Reads a geometry representation from a <see cref="T:byte[]"/> to a Geometry.
         /// </summary>
         /// <param name="source"> The source to read the geometry from </param>
@@ -192,10 +198,16 @@ namespace NetTopologySuite.IO
                         break;
 
                     case OpenGisType.Polygon:
-                        // NB: For geography (ellipsoidal) data, the actual shell is the figure oriented counter-clockwise
+                        var rings = figures.Select(f => factory.CreateLinearRing(f)).ToList();
+                        var shell = IsGeography && !SkipGeographyFixup
+                            ? rings.FirstOrDefault(r => r.IsCCW)
+                            : rings.FirstOrDefault();
                         geometry = factory.CreatePolygon(
-                            factory.CreateLinearRing(figures.FirstOrDefault()),
-                            figures.Skip(1).Select(f => factory.CreateLinearRing(f)).ToArray());
+                            shell,
+                            Enumerable.ToArray(
+                                IsGeography && !SkipGeographyFixup
+                                ? rings.Where(r => r != shell)
+                                : rings.Skip(1)));
                         Debug.Assert(!geometries.ContainsKey(shapeIndex));
                         break;
 

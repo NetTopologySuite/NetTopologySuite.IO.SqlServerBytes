@@ -61,6 +61,24 @@ namespace NetTopologySuite.IO.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to When writing a SQL Server geography value, the holes of a polygon must be oriented clockwise..
+        /// </summary>
+        internal static string InvalidGeographyHoleOrientation {
+            get {
+                return ResourceManager.GetString("InvalidGeographyHoleOrientation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to When writing a SQL Server geography value, the shell of a polygon must be oriented counter-clockwise. To write polygons without a shell, set SkipGeographyChecks..
+        /// </summary>
+        internal static string InvalidGeographyShellOrientation {
+            get {
+                return ResourceManager.GetString("InvalidGeographyShellOrientation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The GEOGRAPHY structure received is incomplete and cannot be read..
         /// </summary>
         internal static string UnexpectedEndOfStream {

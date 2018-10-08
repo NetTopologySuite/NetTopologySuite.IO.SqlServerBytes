@@ -82,6 +82,13 @@ namespace NetTopologySuite.IO
         public virtual bool IsGeography { get; set; }
 
         /// <summary>
+        ///     Gets or sets a value indicating whether to skip the checking of geography data. If true, the rings of a
+        ///     geography polygon are used as is. Otherwise, the shell must be oriented counter-clockwise and the holes
+        ///     clockwise.
+        /// </summary>
+        public virtual bool SkipGeographyChecks { get; set; }
+
+        /// <summary>
         ///     Writes a binary representation of a given geometry.
         /// </summary>
         /// <param name="geometry"> The geometry </param>
@@ -143,11 +150,24 @@ namespace NetTopologySuite.IO
                         break;
 
                     case IPolygon polygon:
-                        // NB: For geography (ellipsoidal) data, the actual shell is the ring oriented counter-clockwise
+                        if (IsGeography
+                            && !SkipGeographyChecks
+                            && !polygon.Shell.IsCCW)
+                        {
+                            throw new ArgumentException(Resources.InvalidGeographyShellOrientation);
+                        }
+
                         figureAdded = addFigure(polygon.Shell, FigureAttribute.PointOrLine);
+
                         foreach (var hole in polygon.Holes)
                         {
-                            // NB: For geography (ellipsoidal) data, the actual holes are the rings oriented clockwise
+                            if (IsGeography
+                                && !SkipGeographyChecks
+                                && hole.IsCCW)
+                            {
+                                throw new ArgumentException(Resources.InvalidGeographyHoleOrientation);
+                            }
+
                             figureAdded |= addFigure(hole, FigureAttribute.PointOrLine);
                         }
                         break;

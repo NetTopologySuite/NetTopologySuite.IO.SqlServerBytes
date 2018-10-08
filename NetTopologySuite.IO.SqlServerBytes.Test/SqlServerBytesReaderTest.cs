@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using GeoAPI;
 using GeoAPI.Geometries;
 using NetTopologySuite.Geometries;
@@ -83,6 +84,31 @@ namespace NetTopologySuite.IO
             "POINT (1 2)",
             "E6100000010C0000000000000040000000000000F03F")]
         [InlineData(
+            "POLYGON ((0 0, 3 0, 3 3, 0 3, 0 0), (1 1, 1 2, 2 2, 2 1, 1 1))",
+            "E610000001040A000000000000000000F03F000000000000F03F0000000000000040000000000000F03F00000000000000400000000000000040000000000000F03F0000000000000040000000000000F03F000000000000F03F0000000000000000000000000000000000000000000000000000000000000840000000000000084000000000000008400000000000000840000000000000000000000000000000000000000000000000020000000200000000000500000001000000FFFFFFFF0000000003")]
+        public void Read_works_when_IsGeography(string expected, string bytes)
+        {
+            Assert.Equal(expected, Read(bytes, isGeography: true).AsText());
+        }
+
+        [Theory]
+        [InlineData(
+            "E610000002240400000000000000000000000000000000000000000000000000F03F0000000000000000000000000000F03F000000000000F03F0000000000000000000000000000000001000000010000000001000000FFFFFFFF0000000003")]
+        [InlineData(
+            "E610000002240800000000000000000000000000000000000000000000000000F03F0000000000000000000000000000F03F000000000000F03F000000000000000000000000000000000000000000000000000000000000F03F000000000000F03F0000000000000040000000000000000000000000000000400000000000000000000000000000F03F020000000100000000010400000001000000FFFFFFFF0000000003")]
+        public void Read_throws_when_IsGeography_and_no_shell(string bytes)
+        {
+            var ex = Assert.Throws<ArgumentException>(
+                () => Read(bytes, isGeography: true));
+
+            Assert.Equal("shell is empty but holes are not", ex.Message);
+        }
+
+        [Theory]
+        [InlineData(
+            "POINT (1 2)",
+            "E6100000010C0000000000000040000000000000F03F")]
+        [InlineData(
             "POLYGON ((0 0, 0 1, 1 1, 0 0))",
             "E610000002240400000000000000000000000000000000000000000000000000F03F0000000000000000000000000000F03F000000000000F03F0000000000000000000000000000000001000000010000000001000000FFFFFFFF0000000003")]
         [InlineData(
@@ -91,9 +117,9 @@ namespace NetTopologySuite.IO
         [InlineData(
             "POLYGON ((0 0, 0 1, 1 1, 0 0), (1 0, 2 1, 2 0, 1 0))",
             "E610000002240800000000000000000000000000000000000000000000000000F03F0000000000000000000000000000F03F000000000000F03F000000000000000000000000000000000000000000000000000000000000F03F000000000000F03F0000000000000040000000000000000000000000000000400000000000000000000000000000F03F020000000100000000010400000001000000FFFFFFFF0000000003")]
-        public void Read_works_when_IsGeography(string expected, string bytes)
+        public void Read_works_when_IsGeography_and_SkipGeographyFixup(string expected, string bytes)
         {
-            Assert.Equal(expected, Read(bytes, isGeography: true).AsText());
+            Assert.Equal(expected, Read(bytes, isGeography: true, skipGeographyFixup: true).AsText());
         }
 
         [Fact]
@@ -204,7 +230,8 @@ namespace NetTopologySuite.IO
             string bytes,
             IGeometryServices geometryServices = null,
             Ordinates handleOrdinates = Ordinates.XYZM,
-            bool isGeography = false)
+            bool isGeography = false,
+            bool skipGeographyFixup = false)
         {
             var byteArray = new byte[bytes.Length / 2];
             for (var i = 0; i < bytes.Length; i += 2)
@@ -215,7 +242,8 @@ namespace NetTopologySuite.IO
             var reader = new SqlServerBytesReader(geometryServices ?? NtsGeometryServices.Instance)
             {
                 HandleOrdinates = handleOrdinates,
-                IsGeography = isGeography
+                IsGeography = isGeography,
+                SkipGeographyFixup = skipGeographyFixup
             };
 
             return reader.Read(byteArray);

@@ -1,8 +1,10 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using GeoAPI;
 using GeoAPI.Geometries;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.Geometries.Implementation;
+using NetTopologySuite.IO.Properties;
 using Xunit;
 
 using GeoParseException = GeoAPI.IO.ParseException;
@@ -85,16 +87,58 @@ namespace NetTopologySuite.IO
             Assert.Equal(expected, Write(geometry));
         }
 
+        [Fact]
+        public void Read_works_when_IsGeography()
+        {
+            var geometry = new WKTReader().Read("POINT (1 2)");
+            geometry.SRID = 4326;
+
+            Assert.Equal("E6100000010C0000000000000040000000000000F03F", Write(geometry, isGeography: true));
+        }
+
+        [Fact]
+        public void Read_throws_when_IsGeography_and_shell_oriented_clockwise()
+        {
+            var geometry = new WKTReader().Read("POLYGON ((0 0, 0 1, 1 1, 0 0))");
+            geometry.SRID = 4326;
+
+            var ex = Assert.Throws<ArgumentException>(
+                () => Write(geometry, isGeography: true));
+
+            Assert.Equal(Resources.InvalidGeographyShellOrientation, ex.Message);
+        }
+
+        [Fact]
+        public void Read_throws_when_IsGeography_and_hole_oriented_counter_clockwise()
+        {
+            var geometry = new WKTReader().Read("POLYGON ((0 0, 3 0, 3 3, 0 3, 0 0), (1 1, 2 1, 2 2, 1 2, 1 1))");
+            geometry.SRID = 4326;
+
+            var ex = Assert.Throws<ArgumentException>(
+                () => Write(geometry, isGeography: true));
+
+            Assert.Equal(Resources.InvalidGeographyHoleOrientation, ex.Message);
+        }
+
         [Theory]
         [InlineData(
             "POINT (1 2)",
             "E6100000010C0000000000000040000000000000F03F")]
-        public void Read_works_when_IsGeography(string wkt, string expected)
+        [InlineData(
+            "POLYGON ((0 0, 0 1, 1 1, 0 0))",
+            "E610000001040400000000000000000000000000000000000000000000000000F03F0000000000000000000000000000F03F000000000000F03F0000000000000000000000000000000001000000020000000001000000FFFFFFFF0000000003")]
+        [InlineData(
+            "POLYGON ((1 1, 1 2, 2 2, 2 1, 1 1), (0 0, 3 0, 3 3, 0 3, 0 0))",
+            "E610000001000A000000000000000000F03F000000000000F03F0000000000000040000000000000F03F00000000000000400000000000000040000000000000F03F0000000000000040000000000000F03F000000000000F03F0000000000000000000000000000000000000000000000000000000000000840000000000000084000000000000008400000000000000840000000000000000000000000000000000000000000000000020000000200000000000500000001000000FFFFFFFF0000000003")]
+        [InlineData(
+            "POLYGON ((0 0, 0 1, 1 1, 0 0), (1 0, 2 1, 2 0, 1 0))",
+            "E610000001000800000000000000000000000000000000000000000000000000F03F0000000000000000000000000000F03F000000000000F03F000000000000000000000000000000000000000000000000000000000000F03F000000000000F03F0000000000000040000000000000000000000000000000400000000000000000000000000000F03F020000000200000000000400000001000000FFFFFFFF0000000003")]
+        public void Read_works_when_IsGeography_and_SkipGeographyChecks(string wkt, string expected)
         {
             var geometry = new WKTReader().Read(wkt);
             geometry.SRID = 4326;
 
-            Assert.Equal(expected, Write(geometry, isGeography: true));
+            Assert.Equal(expected, Write(geometry, isGeography: true, skipGeographyChecks: true));
         }
 
         [Fact]
@@ -187,12 +231,17 @@ namespace NetTopologySuite.IO
                 () => reader.Read(wkt));
         }
 
-        private string Write(IGeometry geometry, Ordinates handleOrdinates = Ordinates.XYZM, bool isGeography = false)
+        private string Write(
+            IGeometry geometry,
+            Ordinates handleOrdinates = Ordinates.XYZM,
+            bool isGeography = false,
+            bool skipGeographyChecks = false)
         {
             var writer = new SqlServerBytesWriter
             {
                 HandleOrdinates = handleOrdinates,
-                IsGeography = isGeography
+                IsGeography = isGeography,
+                SkipGeographyChecks = skipGeographyChecks
             };
 
             return string.Concat(writer.Write(geometry).Select(b => b.ToString("X2")));
