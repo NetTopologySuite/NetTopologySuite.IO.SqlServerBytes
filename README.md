@@ -1,2 +1,2 @@
-# NetTopologySuite.IO.SqlServer
-A Server IO module for NTS that targets .NET Standard.
+# NetTopologySuite.IO.SqlServerBytes
+A SQL Server IO module for NTS which works directly with the serialization format

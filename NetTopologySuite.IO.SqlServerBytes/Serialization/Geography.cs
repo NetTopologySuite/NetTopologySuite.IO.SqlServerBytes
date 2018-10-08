@@ -10,12 +10,12 @@ namespace NetTopologySuite.IO.Serialization
     {
         public int SRID { get; set; }
         public byte Version { get; set; } = 1;
-        public IList<Point> Points { get; } = new List<Point>();
-        public IList<double> ZValues { get; } = new List<double>();
-        public IList<double> MValues { get; } = new List<double>();
-        public IList<Figure> Figures { get; } = new List<Figure>();
-        public IList<Shape> Shapes { get; } = new List<Shape>();
-        public IList<Segment> Segments { get; } = new List<Segment>();
+        public List<Point> Points { get; } = new List<Point>();
+        public List<double> ZValues { get; } = new List<double>();
+        public List<double> MValues { get; } = new List<double>();
+        public List<Figure> Figures { get; } = new List<Figure>();
+        public List<Shape> Shapes { get; } = new List<Shape>();
+        public List<Segment> Segments { get; } = new List<Segment>();
         public bool IsValid { get; set; } = true;
         public bool IsLargerThanAHemisphere { get; set; }
 
@@ -40,8 +40,13 @@ namespace NetTopologySuite.IO.Serialization
                 }
 
                 var properties = (SerializationProperties)reader.ReadByte();
+
                 geography.IsValid = properties.HasFlag(SerializationProperties.IsValid);
-                geography.IsLargerThanAHemisphere = properties.HasFlag(SerializationProperties.IsLargerThanAHemisphere);
+
+                if (geography.Version == 2)
+                {
+                    geography.IsLargerThanAHemisphere = properties.HasFlag(SerializationProperties.IsLargerThanAHemisphere);
+                }
 
                 var numberOfPoints = properties.HasFlag(SerializationProperties.IsSinglePoint)
                     ? 1
@@ -78,7 +83,7 @@ namespace NetTopologySuite.IO.Serialization
                     geography.Figures.Add(
                         new Figure
                         {
-                            FigureAttribute = FigureAttribute.Line,
+                            FigureAttribute = FigureAttribute.PointOrLine,
                             PointOffset = 0
                         });
                 }
@@ -93,7 +98,7 @@ namespace NetTopologySuite.IO.Serialization
                         if (geography.Version == 1)
                         {
                             // NB: The legacy value is ignored. Exterior rings are always first
-                            figure.FigureAttribute = FigureAttribute.Line;
+                            figure.FigureAttribute = FigureAttribute.PointOrLine;
                         }
                         else if (figure.FigureAttribute == FigureAttribute.Curve)
                         {
@@ -177,7 +182,7 @@ namespace NetTopologySuite.IO.Serialization
             {
                 properties |= SerializationProperties.IsSingleLineSegment;
             }
-            if (IsLargerThanAHemisphere)
+            if (Version == 2 && IsLargerThanAHemisphere)
             {
                 properties |= SerializationProperties.IsLargerThanAHemisphere;
             }
@@ -214,6 +219,8 @@ namespace NetTopologySuite.IO.Serialization
 
             if (Version == 1)
             {
+                // For version 1, we need to keep track of each figure's shape to determine whether a polygon's ring is
+                // internal or external
                 for (var shapeIndex = 0; shapeIndex < Shapes.Count; shapeIndex++)
                 {
                     var shape = Shapes[shapeIndex];
@@ -232,7 +239,7 @@ namespace NetTopologySuite.IO.Serialization
                         ? Figures.Count - 1
                         : Shapes[nextShapeIndex].FigureOffset - 1;
 
-                    if (Shapes[shapeIndex].Type == OpenGisType.Polygon)
+                    if (shape.Type == OpenGisType.Polygon)
                     {
                         // NB: Although never mentioned in MS-SSCLRT (v20170816), exterior rings must be first
                         writer.Write((byte)LegacyFigureAttribute.ExteriorRing);

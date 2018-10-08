@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NetTopologySuite.IO.SqlServer\NetTopologySuite.IO.SqlServer.csproj" />
+    <ProjectReference Include="..\NetTopologySuite.IO.SqlServerBytes\NetTopologySuite.IO.SqlServerBytes.csproj" />
   </ItemGroup>
 
 </Project>

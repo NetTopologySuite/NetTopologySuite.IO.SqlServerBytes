@@ -15,7 +15,7 @@ namespace NetTopologySuite.IO
     ///     Writes <see cref="IGeometry"/> instances into geography or geometry data in the SQL Server serialization
     ///     format (described in MS-SSCLRT).
     /// </summary>
-    public class SqlServerSpatialWriter : IBinaryGeometryWriter
+    public class SqlServerBytesWriter : IBinaryGeometryWriter
     {
         private bool _emitZ = true;
         private bool _emitM = true;
@@ -139,16 +139,16 @@ namespace NetTopologySuite.IO
                 {
                     case IPoint point:
                     case ILineString lineString:
-                        figureAdded = addFigure(currentGeometry, FigureAttribute.Line);
+                        figureAdded = addFigure(currentGeometry, FigureAttribute.PointOrLine);
                         break;
 
                     case IPolygon polygon:
                         // NB: For geography (ellipsoidal) data, the actual shell is the ring oriented counter-clockwise
-                        figureAdded = addFigure(polygon.Shell, FigureAttribute.Line);
+                        figureAdded = addFigure(polygon.Shell, FigureAttribute.PointOrLine);
                         foreach (var hole in polygon.Holes)
                         {
                             // NB: For geography (ellipsoidal) data, the actual holes are the rings oriented clockwise
-                            figureAdded |= addFigure(hole, FigureAttribute.Line);
+                            figureAdded |= addFigure(hole, FigureAttribute.PointOrLine);
                         }
                         break;
 
@@ -181,11 +181,9 @@ namespace NetTopologySuite.IO
                     foreach (var coordinate in g.Coordinates)
                     {
                         geography.Points.Add(
-                            new Point
-                            {
-                                X = IsGeography ? coordinate.Y : coordinate.X,
-                                Y = IsGeography ? coordinate.X : coordinate.Y
-                            });
+                            IsGeography
+                                ? new Point { Long = coordinate.X, Lat = coordinate.Y }
+                                : new Point { X = coordinate.X, Y = coordinate.Y });
                         pointsAdded = true;
 
                         if (_emitZ)

@@ -10,7 +10,7 @@ using GeoParseException = GeoAPI.IO.ParseException;
 
 namespace NetTopologySuite.IO
 {
-    public class SqlServerSpatialReaderTest
+    public class SqlServerBytesReaderTest
     {
         [Theory]
         [InlineData(
@@ -76,6 +76,24 @@ namespace NetTopologySuite.IO
         public void Read_works(string expected, string bytes)
         {
             Assert.Equal(expected, Read(bytes).AsText());
+        }
+
+        [Theory]
+        [InlineData(
+            "POINT (1 2)",
+            "E6100000010C0000000000000040000000000000F03F")]
+        [InlineData(
+            "POLYGON ((0 0, 0 1, 1 1, 0 0))",
+            "E610000002240400000000000000000000000000000000000000000000000000F03F0000000000000000000000000000F03F000000000000F03F0000000000000000000000000000000001000000010000000001000000FFFFFFFF0000000003")]
+        [InlineData(
+            "POLYGON ((1 1, 1 2, 2 2, 2 1, 1 1), (0 0, 3 0, 3 3, 0 3, 0 0))",
+            "E610000001040A000000000000000000F03F000000000000F03F0000000000000040000000000000F03F00000000000000400000000000000040000000000000F03F0000000000000040000000000000F03F000000000000F03F0000000000000000000000000000000000000000000000000000000000000840000000000000084000000000000008400000000000000840000000000000000000000000000000000000000000000000020000000200000000000500000001000000FFFFFFFF0000000003")]
+        [InlineData(
+            "POLYGON ((0 0, 0 1, 1 1, 0 0), (1 0, 2 1, 2 0, 1 0))",
+            "E610000002240800000000000000000000000000000000000000000000000000F03F0000000000000000000000000000F03F000000000000F03F000000000000000000000000000000000000000000000000000000000000F03F000000000000F03F0000000000000040000000000000000000000000000000400000000000000000000000000000F03F020000000100000000010400000001000000FFFFFFFF0000000003")]
+        public void Read_works_when_IsGeography(string expected, string bytes)
+        {
+            Assert.Equal(expected, Read(bytes, isGeography: true).AsText());
         }
 
         [Fact]
@@ -147,6 +165,12 @@ namespace NetTopologySuite.IO
         }
 
         [Fact]
+        public void IsGeography_flips_x_and_y()
+        {
+
+        }
+
+        [Fact]
         public void Read_throws_when_circular_string()
         {
             var ex = Assert.Throws<GeoParseException>(
@@ -185,7 +209,8 @@ namespace NetTopologySuite.IO
         private IGeometry Read(
             string bytes,
             IGeometryServices geometryServices = null,
-            Ordinates handleOrdinates = Ordinates.XYZM)
+            Ordinates handleOrdinates = Ordinates.XYZM,
+            bool isGeography = false)
         {
             var byteArray = new byte[bytes.Length / 2];
             for (var i = 0; i < bytes.Length; i += 2)
@@ -193,9 +218,10 @@ namespace NetTopologySuite.IO
                 byteArray[i / 2] = byte.Parse(bytes.Substring(i, 2), NumberStyles.HexNumber);
             }
 
-            var reader = new SqlServerSpatialReader(geometryServices ?? NtsGeometryServices.Instance)
+            var reader = new SqlServerBytesReader(geometryServices ?? NtsGeometryServices.Instance)
             {
-                HandleOrdinates = handleOrdinates
+                HandleOrdinates = handleOrdinates,
+                IsGeography = isGeography
             };
 
             return reader.Read(byteArray);

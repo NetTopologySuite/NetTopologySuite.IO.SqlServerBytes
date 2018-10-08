@@ -2,13 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Description>A Server IO module for NTS that targets .NET Standard.</Description>
-    <Copyright>Copyright (c) 2018, The NetTopologySuite Team</Copyright>
+    <Description>A SQL Server IO module for NTS which works directly with the serialization format</Description>
+    <Copyright>Copyright (c) 2018, NetTopologySuite-Team</Copyright>
     <RepositoryType>git</RepositoryType>
-    <PackageProjectUrl>https://github.com/NetTopologySuite/NetTopologySuite.IO.SqlServer</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/NetTopologySuite/NetTopologySuite.IO.SqlServer.git</RepositoryUrl>
-    <PackageLicenseUrl>https://github.com/NetTopologySuite/NetTopologySuite.IO.SqlServer/blob/master/LICENSE</PackageLicenseUrl>
-    <Authors>The NetTopologySuite Team</Authors>
+    <PackageProjectUrl>https://github.com/NetTopologySuite/NetTopologySuite.IO.SqlServerBytes</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/NetTopologySuite/NetTopologySuite.IO.SqlServerBytes.git</RepositoryUrl>
+    <PackageLicenseUrl>https://github.com/NetTopologySuite/NetTopologySuite.IO.SqlServerBytes/blob/master/LICENSE</PackageLicenseUrl>
+    <Authors>NetTopologySuite-Team</Authors>
     <PackageTags>NTS</PackageTags>
     <AssemblyVersion>1.15.0.0</AssemblyVersion>
     <FileVersion>1.15.0.0</FileVersion>
@@ -16,8 +16,9 @@
     <RootNamespace>NetTopologySuite.IO</RootNamespace>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\nts.snk</AssemblyOriginatorKeyFile>
-    <DocumentationFile>$(OutputPath)$(AssemblyName).xml</DocumentationFile>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <DebugType>embedded</DebugType>
   </PropertyGroup>
 
   <ItemGroup>

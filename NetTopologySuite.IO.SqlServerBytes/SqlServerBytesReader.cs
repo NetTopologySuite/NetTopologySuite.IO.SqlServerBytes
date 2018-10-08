@@ -16,25 +16,25 @@ namespace NetTopologySuite.IO
     ///     Reads geography or geometry data in the SQL Server serialization format (described in MS-SSCLRT) into
     ///     <see cref="IGeometry"/> instances.
     /// </summary>
-    public class SqlServerSpatialReader : IBinaryGeometryReader
+    public class SqlServerBytesReader : IBinaryGeometryReader
     {
         private readonly IGeometryServices _services;
         private readonly ICoordinateSequenceFactory _sequenceFactory;
         private Ordinates _handleOrdinates;
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="SqlServerSpatialReader"/> class.
+        ///     Initializes a new instance of the <see cref="SqlServerBytesReader"/> class.
         /// </summary>
-        public SqlServerSpatialReader()
+        public SqlServerBytesReader()
             : this(GeometryServiceProvider.Instance)
         {
         }
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="SqlServerSpatialReader"/> class.
+        ///     Initializes a new instance of the <see cref="SqlServerBytesReader"/> class.
         /// </summary>
         /// <param name="services"> The geometry services used to create <see cref="IGeometry"/> instances. </param>
-        public SqlServerSpatialReader(IGeometryServices services)
+        public SqlServerBytesReader(IGeometryServices services)
         {
             _services = services ?? GeometryServiceProvider.Instance;
             _sequenceFactory = _services.DefaultCoordinateSequenceFactory;
@@ -62,7 +62,7 @@ namespace NetTopologySuite.IO
         }
 
         /// <summary>
-        ///     Gets and <see cref="Ordinates"/> flag that indicate which ordinates can be handled.
+        ///     Gets an <see cref="Ordinates"/> flag that indicate which ordinates can be handled.
         /// </summary>
         public virtual Ordinates AllowedOrdinates
             => Ordinates.XYZM & _sequenceFactory.Ordinates;
@@ -155,8 +155,8 @@ namespace NetTopologySuite.IO
                                 var point = geography.Points[pointIndex];
                                 var coordinateIndex = pointIndex - figure.PointOffset;
 
-                                coordinates.SetOrdinate(coordinateIndex, Ordinate.X, IsGeography ? point.Y : point.X);
-                                coordinates.SetOrdinate(coordinateIndex, Ordinate.Y, IsGeography ? point.X : point.Y);
+                                coordinates.SetOrdinate(coordinateIndex, Ordinate.X, IsGeography ? point.Long : point.X);
+                                coordinates.SetOrdinate(coordinateIndex, Ordinate.Y, IsGeography ? point.Lat : point.Y);
 
                                 if (handleZ)
                                 {

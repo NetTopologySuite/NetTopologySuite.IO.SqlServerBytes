@@ -9,7 +9,7 @@ using GeoParseException = GeoAPI.IO.ParseException;
 
 namespace NetTopologySuite.IO
 {
-    public class SqlServerSpatialWriterTest
+    public class SqlServerBytesWriterTest
     {
         [Theory]
         [InlineData(
@@ -177,7 +177,7 @@ namespace NetTopologySuite.IO
 
         private string Write(IGeometry geometry, Ordinates handleOrdinates = Ordinates.XYZM)
         {
-            var writer = new SqlServerSpatialWriter
+            var writer = new SqlServerBytesWriter
             {
                 HandleOrdinates = handleOrdinates
             };
