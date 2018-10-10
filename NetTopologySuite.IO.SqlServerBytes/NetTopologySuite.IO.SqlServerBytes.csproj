@@ -20,6 +20,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <DebugType>embedded</DebugType>
     <PackageVersion>1.15.0-pre001</PackageVersion>
+    <iconUrl>https://raw.githubusercontent.com/NetTopologySuite/GeoAPI/develop/icon.png</iconUrl>    
   </PropertyGroup>
 
   <ItemGroup>
