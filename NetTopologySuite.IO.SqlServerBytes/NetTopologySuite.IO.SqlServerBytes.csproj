@@ -19,6 +19,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <DebugType>embedded</DebugType>
+    <PackageVersion>1.15.0-pre001</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
