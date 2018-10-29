@@ -41,7 +41,7 @@
     <AssemblyVersion>$(VersionMajor).0.0.0</AssemblyVersion>
 
     <FileVersionRevision Condition=" '$(TRAVIS_BUILD_NUMBER)' != '' ">$(TRAVIS_BUILD_NUMBER)</FileVersionRevision>
-    <FileVersionRevision Condition=" '$(FileVersionSuffix)' == '' ">0</FileVersionRevision>
+    <FileVersionRevision Condition=" '$(FileVersionRevision)' == '' ">0</FileVersionRevision>
     <FileVersion>$(VersionPrefix).$(FileVersionRevision)</FileVersion>
 
     <!-- NU5105: SemVer 2.0.0 version won't be compatible with clients that expect SemVer 1.0.0. -->
