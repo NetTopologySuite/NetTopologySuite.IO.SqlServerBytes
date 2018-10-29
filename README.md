@@ -1,9 +1,9 @@
 # NetTopologySuite.IO.SqlServerBytes
 A SQL Server IO module for NTS which works directly with the serialization format
 
-| License | Travis | NuGet |
-| ------- | ------ | ----- |
-| [![License](https://img.shields.io/github/license/NetTopologySuite/NetTopologySuite.IO.SqlServerBytes.svg)](https://github.com/NetTopologySuite/NetTopologySuite.IO.SqlServerBytes/blob/master/LICENSE) | [![Travis](https://travis-ci.org/NetTopologySuite/NetTopologySuite.IO.SqlServerBytes.svg?branch=master)](https://travis-ci.org/NetTopologySuite/NetTopologySuite.IO.SqlServerBytes) | [![NuGet](https://img.shields.io/nuget/v/NetTopologySuite.IO.SqlServerBytes.svg)](https://www.nuget.org/packages/NetTopologySuite.IO.SqlServerBytes/) |
+| License | Travis | NuGet | MyGet (pre-release) |
+| ------- | ------ | ----- | ------------------- |
+| [![License](https://img.shields.io/github/license/NetTopologySuite/NetTopologySuite.IO.SqlServerBytes.svg)](https://github.com/NetTopologySuite/NetTopologySuite.IO.SqlServerBytes/blob/master/LICENSE) | [![Travis](https://travis-ci.org/NetTopologySuite/NetTopologySuite.IO.SqlServerBytes.svg?branch=master)](https://travis-ci.org/NetTopologySuite/NetTopologySuite.IO.SqlServerBytes) | [![NuGet](https://img.shields.io/nuget/v/NetTopologySuite.IO.SqlServerBytes.svg)](https://www.nuget.org/packages/NetTopologySuite.IO.SqlServerBytes/) | [![MyGet](https://img.shields.io/myget/nettopologysuite/vpre/NetTopologySuite.IO.SqlServerBytes.svg?style=flat)](https://myget.org/feed/nettopologysuite/package/nuget/NetTopologySuite.IO.SqlServerBytes) |
 
 ## Usage
 
