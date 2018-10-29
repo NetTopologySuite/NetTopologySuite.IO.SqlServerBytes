@@ -1,7 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <SolutionDir Condition=" '$(SolutionDir)' == '' ">$(ProjectDir)..\</SolutionDir>
     <TargetFramework>netstandard2.0</TargetFramework>
+
     <Description>A SQL Server IO module for NTS which works directly with the serialization format</Description>
     <Copyright>Copyright (c) 2018, NetTopologySuite-Team</Copyright>
     <RepositoryType>git</RepositoryType>
@@ -9,22 +11,46 @@
     <RepositoryUrl>https://github.com/NetTopologySuite/NetTopologySuite.IO.SqlServerBytes.git</RepositoryUrl>
     <PackageLicenseUrl>https://github.com/NetTopologySuite/NetTopologySuite.IO.SqlServerBytes/blob/master/LICENSE</PackageLicenseUrl>
     <Authors>NetTopologySuite-Team</Authors>
-    <PackageTags>NTS</PackageTags>
-    <AssemblyVersion>1.15.0.0</AssemblyVersion>
-    <FileVersion>1.15.0.0</FileVersion>
+    <PackageTags>NTS;MSSQL;SQLServer;SQL Server;SQL</PackageTags>
     <PackageIconUrl>https://raw.githubusercontent.com/NetTopologySuite/GeoAPI/master/icon.png</PackageIconUrl>
-    <RootNamespace>NetTopologySuite.IO</RootNamespace>
+    <iconUrl>https://raw.githubusercontent.com/NetTopologySuite/GeoAPI/develop/icon.png</iconUrl>
+
+    <!-- we generate this in travis-build.sh with special parameters. -->
+    <!--<GeneratePackageOnBuild>true</GeneratePackageOnBuild>-->
+
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\nts.snk</AssemblyOriginatorKeyFile>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <DebugType>embedded</DebugType>
-    <PackageVersion>1.15.0-pre001</PackageVersion>
-    <iconUrl>https://raw.githubusercontent.com/NetTopologySuite/GeoAPI/develop/icon.png</iconUrl>    
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <AssemblyOriginatorKeyFile>$(SolutionDir)\nts.snk</AssemblyOriginatorKeyFile>
+    <RootNamespace>NetTopologySuite.IO</RootNamespace>
+
+    <ContinuousIntegrationBuild Condition=" '$(CONTINUOUS_INTEGRATION)' == 'true' ">true</ContinuousIntegrationBuild>
+    <Deterministic Condition=" '$(CONTINUOUS_INTEGRATION)' == 'true' ">true</Deterministic>
+    <EmbedAllSources>true</EmbedAllSources>
+  </PropertyGroup>
+
+  <!-- Versioning-specific properties -->
+  <PropertyGroup>
+    <VersionMajor>1</VersionMajor>
+    <VersionMinor>15</VersionMinor>
+    <VersionPatch>0</VersionPatch>
+
+    <VersionPrefix>$(VersionMajor).$(VersionMinor).$(VersionPatch)</VersionPrefix>
+    <!-- Only use the major version for AssemblyVersion, per the recommendation from:
+         https://docs.microsoft.com/en-us/dotnet/standard/library-guidance/versioning -->
+    <AssemblyVersion>$(VersionMajor).0.0.0</AssemblyVersion>
+
+    <FileVersionRevision Condition=" '$(TRAVIS_BUILD_NUMBER)' != '' ">$(TRAVIS_BUILD_NUMBER)</FileVersionRevision>
+    <FileVersionRevision Condition=" '$(FileVersionSuffix)' == '' ">0</FileVersionRevision>
+    <FileVersion>$(VersionPrefix).$(FileVersionRevision)</FileVersion>
+
+    <!-- NU5105: SemVer 2.0.0 version won't be compatible with clients that expect SemVer 1.0.0. -->
+    <!--<NoWarn>$(NoWarn);NU5105</NoWarn>-->
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="GeoAPI.Core" Version="1.7.5" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-63127-02" PrivateAssets="All"/>
   </ItemGroup>
 
   <ItemGroup>
