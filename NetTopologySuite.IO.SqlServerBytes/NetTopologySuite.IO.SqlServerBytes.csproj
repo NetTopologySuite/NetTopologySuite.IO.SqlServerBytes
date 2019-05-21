@@ -49,7 +49,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GeoAPI.Core" Version="1.7.5" />
+    <PackageReference Include="GeoAPI.Core" Version="[1.7.5, 2.0.0-A)" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta2-18618-05" PrivateAssets="All" />
   </ItemGroup>
 
