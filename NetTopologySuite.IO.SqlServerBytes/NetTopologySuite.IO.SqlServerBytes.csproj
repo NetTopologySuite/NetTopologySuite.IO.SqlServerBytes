@@ -33,7 +33,7 @@
   <PropertyGroup>
     <VersionMajor>1</VersionMajor>
     <VersionMinor>15</VersionMinor>
-    <VersionPatch>0</VersionPatch>
+    <VersionPatch>1</VersionPatch>
 
     <VersionPrefix>$(VersionMajor).$(VersionMinor).$(VersionPatch)</VersionPrefix>
     <!-- Only use the major version for AssemblyVersion, per the recommendation from:
@@ -50,7 +50,7 @@
 
   <ItemGroup>
     <PackageReference Include="GeoAPI.Core" Version="1.7.5" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-63127-02" PrivateAssets="All"/>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta2-18618-05" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>
