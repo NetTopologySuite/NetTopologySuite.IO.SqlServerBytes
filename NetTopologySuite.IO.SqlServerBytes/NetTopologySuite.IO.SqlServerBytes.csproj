@@ -9,7 +9,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageProjectUrl>https://github.com/NetTopologySuite/NetTopologySuite.IO.SqlServerBytes</PackageProjectUrl>
     <RepositoryUrl>https://github.com/NetTopologySuite/NetTopologySuite.IO.SqlServerBytes.git</RepositoryUrl>
-    <PackageLicenseUrl>https://github.com/NetTopologySuite/NetTopologySuite.IO.SqlServerBytes/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
     <Authors>NetTopologySuite-Team</Authors>
     <PackageTags>NTS;MSSQL;SQLServer;SQL Server;SQL</PackageTags>
     <PackageIconUrl>https://raw.githubusercontent.com/NetTopologySuite/GeoAPI/master/icon.png</PackageIconUrl>
