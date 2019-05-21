@@ -121,7 +121,7 @@
     <value>When writing a SQL Server geography value, the holes of a polygon must be oriented clockwise.</value>
   </data>
   <data name="InvalidGeographyShellOrientation" xml:space="preserve">
-    <value>When writing a SQL Server geography value, the shell of a polygon must be oriented counter-clockwise. To write polygons without a shell, set SkipGeographyChecks.</value>
+    <value>When writing a SQL Server geography value, the shell of a polygon must be oriented counter-clockwise.</value>
   </data>
   <data name="UnexpectedEndOfStream" xml:space="preserve">
     <value>The GEOGRAPHY structure received is incomplete and cannot be read.</value>

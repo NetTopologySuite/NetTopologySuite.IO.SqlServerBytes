@@ -19,7 +19,7 @@ namespace NetTopologySuite.IO.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -70,7 +70,7 @@ namespace NetTopologySuite.IO.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to When writing a SQL Server geography value, the shell of a polygon must be oriented counter-clockwise. To write polygons without a shell, set SkipGeographyChecks..
+        ///   Looks up a localized string similar to When writing a SQL Server geography value, the shell of a polygon must be oriented counter-clockwise..
         /// </summary>
         internal static string InvalidGeographyShellOrientation {
             get {
