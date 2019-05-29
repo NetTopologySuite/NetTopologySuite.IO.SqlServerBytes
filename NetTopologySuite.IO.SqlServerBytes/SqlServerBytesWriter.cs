@@ -2,20 +2,23 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using GeoAPI.Geometries;
-using GeoAPI.IO;
+using NetTopologySuite.Geometries;
 using NetTopologySuite.IO.Properties;
-using NetTopologySuite.IO.Serialization;
 
+using Figure = NetTopologySuite.IO.Serialization.Figure;
+using FigureAttribute = NetTopologySuite.IO.Serialization.FigureAttribute;
+using Geography = NetTopologySuite.IO.Serialization.Geography;
+using OpenGisType = NetTopologySuite.IO.Serialization.OpenGisType;
+using SqlPoint = NetTopologySuite.IO.Serialization.Point;
 using SqlShape = NetTopologySuite.IO.Serialization.Shape;
 
 namespace NetTopologySuite.IO
 {
     /// <summary>
-    ///     Writes <see cref="IGeometry"/> instances into geography or geometry data in the SQL Server serialization
+    ///     Writes <see cref="Geometry"/> instances into geography or geometry data in the SQL Server serialization
     ///     format (described in MS-SSCLRT).
     /// </summary>
-    public class SqlServerBytesWriter : IBinaryGeometryWriter
+    public class SqlServerBytesWriter
     {
         private bool _emitZ = true;
         private bool _emitM = true;
@@ -86,7 +89,7 @@ namespace NetTopologySuite.IO
         /// </summary>
         /// <param name="geometry"> The geometry </param>
         /// <returns> The binary representation of geometry </returns>
-        public virtual byte[] Write(IGeometry geometry)
+        public virtual byte[] Write(Geometry geometry)
         {
             using (var stream = new MemoryStream())
             {
@@ -101,7 +104,7 @@ namespace NetTopologySuite.IO
         /// </summary>
         /// <param name="geometry"> The geometry </param>
         /// <param name="stream"> The stream to write to. </param>
-        public virtual void Write(IGeometry geometry, Stream stream)
+        public virtual void Write(Geometry geometry, Stream stream)
         {
             var geography = ToGeography(geometry);
 
@@ -111,14 +114,14 @@ namespace NetTopologySuite.IO
             }
         }
 
-        private Geography ToGeography(IGeometry geometry)
+        private Geography ToGeography(Geometry geometry)
         {
             if (geometry == null)
             {
                 return new Geography { SRID = -1 };
             }
 
-            var geometries = new Queue<(IGeometry, int)>();
+            var geometries = new Queue<(Geometry, int)>();
             geometries.Enqueue((geometry, -1));
 
             // TODO: For geography (ellipsoidal) data, set IsLargerThanAHemisphere
@@ -137,12 +140,12 @@ namespace NetTopologySuite.IO
 
                 switch (currentGeometry)
                 {
-                    case IPoint point:
-                    case ILineString lineString:
+                    case Point point:
+                    case LineString lineString:
                         figureAdded = addFigure(currentGeometry, FigureAttribute.PointOrLine);
                         break;
 
-                    case IPolygon polygon:
+                    case Polygon polygon:
                         if (IsGeography
                             && !polygon.Shell.IsCCW)
                         {
@@ -163,7 +166,7 @@ namespace NetTopologySuite.IO
                         }
                         break;
 
-                    case IGeometryCollection geometryCollection:
+                    case GeometryCollection geometryCollection:
                         foreach (var item in geometryCollection.Geometries)
                         {
                             geometries.Enqueue((item, geography.Shapes.Count));
@@ -184,7 +187,7 @@ namespace NetTopologySuite.IO
                         Type = ToOpenGisType(currentGeometry.OgcGeometryType)
                     });
 
-                bool addFigure(IGeometry g, FigureAttribute figureAttribute)
+                bool addFigure(Geometry g, FigureAttribute figureAttribute)
                 {
                     var pointOffset = geography.Points.Count;
                     var pointsAdded = false;
@@ -193,8 +196,8 @@ namespace NetTopologySuite.IO
                     {
                         geography.Points.Add(
                             IsGeography
-                                ? new Point { Long = coordinate.X, Lat = coordinate.Y }
-                                : new Point { X = coordinate.X, Y = coordinate.Y });
+                                ? new SqlPoint { Long = coordinate.X, Lat = coordinate.Y }
+                                : new SqlPoint { X = coordinate.X, Y = coordinate.Y });
                         pointsAdded = true;
 
                         if (_emitZ)

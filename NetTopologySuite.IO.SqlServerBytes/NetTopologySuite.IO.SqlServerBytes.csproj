@@ -27,6 +27,8 @@
     <ContinuousIntegrationBuild Condition=" '$(CONTINUOUS_INTEGRATION)' == 'true' ">true</ContinuousIntegrationBuild>
     <Deterministic Condition=" '$(CONTINUOUS_INTEGRATION)' == 'true' ">true</Deterministic>
     <EmbedAllSources>true</EmbedAllSources>
+
+    <RestoreAdditionalProjectSources>$(RestoreAdditionalProjectSources);https://www.myget.org/F/nettopologysuite/api/v3/index.json</RestoreAdditionalProjectSources>
   </PropertyGroup>
 
   <!-- Versioning-specific properties -->
@@ -49,7 +51,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GeoAPI.Core" Version="[1.7.5, 2.0.0-A)" />
+    <PackageReference Include="NetTopologySuite" Version="[2.0.0-pre.180450649+ci.travis.667, 3.0.0-A)" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta2-18618-05" PrivateAssets="All" />
   </ItemGroup>
 
