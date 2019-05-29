@@ -6,8 +6,9 @@ dist: xenial
 
 
 script:
-- dotnet build -c Release
-- dotnet test -c Release --no-build
+  - dotnet build -c Release
+  - dotnet test  -c Release --no-build
+  - dotnet pack  -c Release --no-build -p:NoWarn=NU5105
 
 
 deploy:
