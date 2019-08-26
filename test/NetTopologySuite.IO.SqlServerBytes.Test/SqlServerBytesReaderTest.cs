@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Globalization;
-using GeoAPI;
-using GeoAPI.Geometries;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.Geometries.Implementation;
 using NetTopologySuite.IO.Properties;
 using Xunit;
 
-using GeoParseException = GeoAPI.IO.ParseException;
+using GeoParseException = NetTopologySuite.IO.ParseException;
 
 namespace NetTopologySuite.IO
 {
@@ -21,7 +19,7 @@ namespace NetTopologySuite.IO
             "POINT (1 2)",
             "00000000010C000000000000F03F0000000000000040")]
         [InlineData(
-            "POINT (1 2 3)",
+            "POINT Z(1 2 3)",
             "00000000010D000000000000F03F00000000000000400000000000000840")]
         [InlineData(
             "LINESTRING EMPTY",
@@ -30,16 +28,16 @@ namespace NetTopologySuite.IO
             "LINESTRING (0 0, 0 1)",
             "000000000114000000000000000000000000000000000000000000000000000000000000F03F")]
         [InlineData(
-            "LINESTRING (0 0 1, 0 1 2)",
+            "LINESTRING Z(0 0 1, 0 1 2)",
             "000000000115000000000000000000000000000000000000000000000000000000000000F03F000000000000F03F0000000000000040")]
         [InlineData(
-            "LINESTRING (0 0, 0 1 2)",
+            "LINESTRING Z(0 0 NaN, 0 1 2)",
             "000000000115000000000000000000000000000000000000000000000000000000000000F03F000000000000F8FF0000000000000040")]
         [InlineData(
             "LINESTRING (0 0, 0 1, 0 2)",
             "00000000010403000000000000000000000000000000000000000000000000000000000000000000F03F0000000000000000000000000000004001000000010000000001000000FFFFFFFF0000000002")]
         [InlineData(
-            "LINESTRING (0 0 1, 0 1 2, 0 2 3)",
+            "LINESTRING Z(0 0 1, 0 1 2, 0 2 3)",
             "00000000010503000000000000000000000000000000000000000000000000000000000000000000F03F00000000000000000000000000000040000000000000F03F0000000000000040000000000000084001000000010000000001000000FFFFFFFF0000000002")]
         [InlineData(
             "POLYGON EMPTY",
@@ -118,16 +116,14 @@ namespace NetTopologySuite.IO
         {
             var geometryServices = new NtsGeometryServices(
                 new PackedCoordinateSequenceFactory(
-                    PackedCoordinateSequenceFactory.PackedType.Double,
-                    dimension: 4),
+                    PackedCoordinateSequenceFactory.PackedType.Double),
                 new PrecisionModel(PrecisionModels.Floating),
                 srid: -1);
-            var point = (IPoint)Read(
+            var point = (Point)Read(
                 "00000000010F000000000000F03F000000000000004000000000000008400000000000001040",
                 geometryServices);
 
-            Assert.Equal(4, point.M);
-            Assert.Equal("POINT (1 2 3)", point.AsText());
+            Assert.Equal("POINT ZM(1 2 3 4)", new WKTWriter(4).Write(point));
         }
 
         [Fact]
@@ -135,18 +131,14 @@ namespace NetTopologySuite.IO
         {
             var geometryServices = new NtsGeometryServices(
                 new PackedCoordinateSequenceFactory(
-                    PackedCoordinateSequenceFactory.PackedType.Double,
-                    dimension: 4),
+                    PackedCoordinateSequenceFactory.PackedType.Double),
                 new PrecisionModel(PrecisionModels.Floating),
                 srid: -1);
-            var lineString = (ILineString)Read(
+            var lineString = (LineString)Read(
                 "000000000117000000000000000000000000000000000000000000000000000000000000F03F00000000000000000000000000000000000000000000F03F0000000000000040",
                 geometryServices);
 
-            var mValues = lineString.GetOrdinates(Ordinate.M);
-            Assert.Equal(1, mValues[0]);
-            Assert.Equal(2, mValues[1]);
-            Assert.Equal("LINESTRING (0 0 0, 0 1 0)", lineString.AsText());
+            Assert.Equal("LINESTRING ZM(0 0 0 1, 0 1 0 2)", new WKTWriter(4).Write(lineString));
         }
 
         [Fact]
@@ -160,16 +152,15 @@ namespace NetTopologySuite.IO
         {
             var geometryServices = new NtsGeometryServices(
                 new PackedCoordinateSequenceFactory(
-                    PackedCoordinateSequenceFactory.PackedType.Double,
-                    dimension: 4),
+                    PackedCoordinateSequenceFactory.PackedType.Double),
                 new PrecisionModel(PrecisionModels.Floating),
                 srid: -1);
-            var point = (IPoint)Read(
+            var point = (Point)Read(
                 "00000000010F000000000000F03F000000000000004000000000000008400000000000001040",
                 geometryServices,
                 Ordinates.XY);
 
-            Assert.Equal("POINT (1 2)", point.AsText());
+            Assert.Equal("POINT (1 2)", new WKTWriter(4).Write(point));
         }
 
         [Fact]
@@ -208,9 +199,9 @@ namespace NetTopologySuite.IO
             Assert.Equal(string.Format(Resources.UnexpectedGeographyType, "FullGlobe"), ex.Message);
         }
 
-        private IGeometry Read(
+        private Geometry Read(
             string bytes,
-            IGeometryServices geometryServices = null,
+            NtsGeometryServices geometryServices = null,
             Ordinates handleOrdinates = Ordinates.XYZM,
             bool isGeography = false)
         {

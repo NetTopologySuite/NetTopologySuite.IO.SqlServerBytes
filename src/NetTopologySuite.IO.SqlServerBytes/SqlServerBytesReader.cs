@@ -2,41 +2,40 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using GeoAPI;
-using GeoAPI.Geometries;
-using GeoAPI.IO;
+using NetTopologySuite.Geometries;
 using NetTopologySuite.IO.Properties;
-using NetTopologySuite.IO.Serialization;
+using GeoParseException = NetTopologySuite.IO.ParseException;
 
-using GeoParseException = GeoAPI.IO.ParseException;
+using Geography = NetTopologySuite.IO.Serialization.Geography;
+using OpenGisType = NetTopologySuite.IO.Serialization.OpenGisType;
 
 namespace NetTopologySuite.IO
 {
     /// <summary>
     ///     Reads geography or geometry data in the SQL Server serialization format (described in MS-SSCLRT) into
-    ///     <see cref="IGeometry"/> instances.
+    ///     <see cref="Geometry"/> instances.
     /// </summary>
-    public class SqlServerBytesReader : IBinaryGeometryReader
+    public class SqlServerBytesReader
     {
-        private readonly IGeometryServices _services;
-        private readonly ICoordinateSequenceFactory _sequenceFactory;
+        private readonly NtsGeometryServices _services;
+        private readonly CoordinateSequenceFactory _sequenceFactory;
         private Ordinates _handleOrdinates;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="SqlServerBytesReader"/> class.
         /// </summary>
         public SqlServerBytesReader()
-            : this(GeometryServiceProvider.Instance)
+            : this(NtsGeometryServices.Instance)
         {
         }
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="SqlServerBytesReader"/> class.
         /// </summary>
-        /// <param name="services"> The geometry services used to create <see cref="IGeometry"/> instances. </param>
-        public SqlServerBytesReader(IGeometryServices services)
+        /// <param name="services"> The geometry services used to create <see cref="Geometry"/> instances. </param>
+        public SqlServerBytesReader(NtsGeometryServices services)
         {
-            _services = services ?? GeometryServiceProvider.Instance;
+            _services = services ?? NtsGeometryServices.Instance;
             _sequenceFactory = _services.DefaultCoordinateSequenceFactory;
             _handleOrdinates = AllowedOrdinates;
         }
@@ -94,7 +93,7 @@ namespace NetTopologySuite.IO
         /// </summary>
         /// <param name="source"> The source to read the geometry from </param>
         /// <returns> A Geometry </returns>
-        public virtual IGeometry Read(byte[] source)
+        public virtual Geometry Read(byte[] source)
         {
             using (var stream = new MemoryStream(source))
             {
@@ -107,7 +106,7 @@ namespace NetTopologySuite.IO
         /// </summary>
         /// <param name="stream"> The stream to read from. </param>
         /// <returns> A geometry. </returns>
-        public virtual IGeometry Read(Stream stream)
+        public virtual Geometry Read(Stream stream)
         {
             Geography geography;
             using (var reader = new BinaryReader(stream))
@@ -118,7 +117,7 @@ namespace NetTopologySuite.IO
             return ToGeometry(geography);
         }
 
-        private IGeometry ToGeometry(Geography geography)
+        private Geometry ToGeometry(Geography geography)
         {
             if (geography.SRID == -1)
             {
@@ -129,14 +128,14 @@ namespace NetTopologySuite.IO
             var handleM = _handleOrdinates.HasFlag(Ordinates.M) && geography.MValues.Count > 0;
 
             var factory = _services.CreateGeometryFactory(geography.SRID);
-            var geometries = new Dictionary<int, Stack<IGeometry>>();
+            var geometries = new Dictionary<int, Stack<Geometry>>();
             var lastFigureIndex = geography.Figures.Count - 1;
             var lastPointIndex = geography.Points.Count - 1;
 
             for (var shapeIndex = geography.Shapes.Count - 1; shapeIndex >= 0; shapeIndex--)
             {
                 var shape = geography.Shapes[shapeIndex];
-                var figures = new Stack<ICoordinateSequence>();
+                var figures = new Stack<CoordinateSequence>();
 
                 if (shape.FigureOffset != -1)
                 {
@@ -178,7 +177,7 @@ namespace NetTopologySuite.IO
                     lastFigureIndex = shape.FigureOffset - 1;
                 }
 
-                IGeometry geometry;
+                Geometry geometry;
                 switch (shape.Type)
                 {
                     case OpenGisType.Point:
@@ -208,7 +207,7 @@ namespace NetTopologySuite.IO
                     case OpenGisType.MultiPoint:
                         geometry = factory.CreateMultiPoint(
                             geometries.TryGetValue(shapeIndex, out var points)
-                                ? points.Cast<IPoint>().ToArray()
+                                ? points.Cast<Point>().ToArray()
                                 : null);
                         geometries.Remove(shapeIndex);
                         break;
@@ -216,7 +215,7 @@ namespace NetTopologySuite.IO
                     case OpenGisType.MultiLineString:
                         geometry = factory.CreateMultiLineString(
                             geometries.TryGetValue(shapeIndex, out var lineStrings)
-                                ? lineStrings.Cast<ILineString>().ToArray()
+                                ? lineStrings.Cast<LineString>().ToArray()
                                 : null);
                         geometries.Remove(shapeIndex);
                         break;
@@ -224,7 +223,7 @@ namespace NetTopologySuite.IO
                     case OpenGisType.MultiPolygon:
                         geometry = factory.CreateMultiPolygon(
                                 geometries.TryGetValue(shapeIndex, out var polygons)
-                                    ? polygons.Cast<IPolygon>().ToArray()
+                                    ? polygons.Cast<Polygon>().ToArray()
                                     : null);
                         geometries.Remove(shapeIndex);
                         break;
@@ -243,7 +242,7 @@ namespace NetTopologySuite.IO
 
                 if (!geometries.ContainsKey(shape.ParentOffset))
                 {
-                    geometries.Add(shape.ParentOffset, new Stack<IGeometry>());
+                    geometries.Add(shape.ParentOffset, new Stack<Geometry>());
                 }
 
                 geometries[shape.ParentOffset].Push(geometry);

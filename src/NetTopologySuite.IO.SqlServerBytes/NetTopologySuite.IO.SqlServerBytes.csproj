@@ -1,0 +1,45 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <SolutionDir Condition=" '$(SolutionDir)' == '' ">$(ProjectDir)..\</SolutionDir>
+    <TargetFramework>netstandard2.0</TargetFramework>
+
+    <SignAssembly>true</SignAssembly>
+    <RootNamespace>NetTopologySuite.IO</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup Label="NuGet Package Info">
+    <PackageId>NetTopologySuite.IO.SqlServerBytes</PackageId>
+    <Title>NTS I/O for MSSQL</Title>
+    <Authors>NetTopologySuite - Team</Authors>
+    <Owners>NetTopologySuite - Team</Owners>
+    <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
+    <Description>A SQL Server IO module for NTS which works directly with the serialization format</Description>
+    <RepositoryType>git</RepositoryType>
+    <PackageProjectUrl>https://github.com/NetTopologySuite/NetTopologySuite.IO.SqlServerBytes</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/NetTopologySuite/NetTopologySuite.IO.SqlServerBytes.git</RepositoryUrl>
+    <PackageTags>NTS;MSSQL;SQLServer;SQL Server;SQL</PackageTags>
+    <PackageIconUrl>https://raw.githubusercontent.com/NetTopologySuite/GeoAPI/master/icon.png</PackageIconUrl>
+    <iconUrl>https://raw.githubusercontent.com/NetTopologySuite/GeoAPI/develop/icon.png</iconUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NetTopologySuite" Version="[2.0.0, 3.0.0-A)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>

@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetTopologySuite.IO.SqlServerBytes", "NetTopologySuite.IO.SqlServerBytes\NetTopologySuite.IO.SqlServerBytes.csproj", "{0402AAFA-DC37-4844-97E2-6205C5BE8882}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetTopologySuite.IO.SqlServerBytes", "src\NetTopologySuite.IO.SqlServerBytes\NetTopologySuite.IO.SqlServerBytes.csproj", "{0402AAFA-DC37-4844-97E2-6205C5BE8882}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetTopologySuite.IO.SqlServerBytes.Test", "NetTopologySuite.IO.SqlServerBytes.Test\NetTopologySuite.IO.SqlServerBytes.Test.csproj", "{D793B2F0-9612-4511-8932-D0D2028691AA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetTopologySuite.IO.SqlServerBytes.Test", "test\NetTopologySuite.IO.SqlServerBytes.Test\NetTopologySuite.IO.SqlServerBytes.Test.csproj", "{D793B2F0-9612-4511-8932-D0D2028691AA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

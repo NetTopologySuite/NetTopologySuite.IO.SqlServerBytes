@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Linq;
-using GeoAPI;
-using GeoAPI.Geometries;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.Geometries.Implementation;
 using NetTopologySuite.IO.Properties;
 using Xunit;
 
-using GeoParseException = GeoAPI.IO.ParseException;
+using GeoParseException = NetTopologySuite.IO.ParseException;
 
 namespace NetTopologySuite.IO
 {
@@ -133,10 +131,9 @@ namespace NetTopologySuite.IO
         [Fact]
         public void Write_works_when_Point_with_M()
         {
-            var factory = GeometryServiceProvider.Instance.CreateGeometryFactory(
-                new PackedCoordinateSequenceFactory(PackedCoordinateSequenceFactory.PackedType.Double, dimension: 4));
-            var point = factory.CreatePoint(new Coordinate(1, 2, 3));
-            point.M = 4;
+            var factory = NtsGeometryServices.Instance.CreateGeometryFactory(
+                new PackedCoordinateSequenceFactory(PackedCoordinateSequenceFactory.PackedType.Double));
+            var point = factory.CreatePoint(new CoordinateZM(1, 2, 3, 4));
 
             Assert.Equal(
                 "00000000010F000000000000F03F000000000000004000000000000008400000000000001040",
@@ -152,7 +149,8 @@ namespace NetTopologySuite.IO
                     0, 0, 0, 1,
                     0, 1, 0, 2
                 },
-                dimensions: 4);
+                dimension: 4,
+                measures: 1);
             var lineString = new LineString(points, Geometry.DefaultFactory);
 
             Assert.Equal(
@@ -169,7 +167,8 @@ namespace NetTopologySuite.IO
                     0, 0, 0, Coordinate.NullOrdinate,
                     0, 1, 0, 1
                 },
-                dimensions: 4);
+                dimension: 4,
+                measures: 1);
             var lineString = new LineString(points, Geometry.DefaultFactory);
 
             Assert.Equal(
@@ -186,10 +185,9 @@ namespace NetTopologySuite.IO
         [Fact]
         public void HandleOrdinates_works()
         {
-            var factory = GeometryServiceProvider.Instance.CreateGeometryFactory(
-                new PackedCoordinateSequenceFactory(PackedCoordinateSequenceFactory.PackedType.Double, dimension: 4));
-            var point = factory.CreatePoint(new Coordinate(1, 2, 3));
-            point.M = 4;
+            var factory = NtsGeometryServices.Instance.CreateGeometryFactory(
+                new PackedCoordinateSequenceFactory(PackedCoordinateSequenceFactory.PackedType.Double));
+            var point = factory.CreatePoint(new CoordinateZM(1, 2, 3, 4));
 
             Assert.Equal(
                 "00000000010C000000000000F03F0000000000000040",
@@ -211,7 +209,7 @@ namespace NetTopologySuite.IO
         }
 
         private string Write(
-            IGeometry geometry,
+            Geometry geometry,
             Ordinates handleOrdinates = Ordinates.XYZM,
             bool isGeography = false)
         {

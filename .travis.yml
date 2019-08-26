@@ -1,10 +1,35 @@
 language: csharp
 mono: none
 sudo: false
-dotnet: 2.1.403
-dist: trusty
+dotnet: 2.2
+dist: xenial
+
+
 script:
-- bash ./travis-build.sh
+  - dotnet build -c Release
+  - dotnet test  -c Release --no-build
+  - dotnet pack  -c Release --no-build -p:NoWarn=NU5105
+
+
+deploy:
+
+
+  - on:
+      branch: master
+    provider: script
+    script:
+      - dotnet nuget push **/*.nupkg -s https://api.nuget.org/v3/index.json -k $NUGET_API_KEY
+    skip_cleanup: true
+
+
+  - on:
+      branch: develop
+    provider: script
+    script:
+      - dotnet nuget push **/*.nupkg -s https://www.myget.org/F/nettopologysuite/api/v2/package -k $MYGET_API_KEY
+    skip_cleanup: true
+
 env:
   global:
-    secure: WbTpyCsfztSl74qaG9TZbBxyOplAM4aeT9BEZ+EJW6Z88meNFJSzbkzL7PqKIwZgInhJIN6WsV3tTUn+7DcdZt6MaUpUpm2d2dUOFq66bnuDBZSAwudi93gBqTJjn2OK3cCUMr2BZdj2AJYwGXdeColQ6IvqmPplDnoBA5JDlVQqWuepxTYNF9pCFs+Qcw/LglXknlzNccJluK0R6zSh9TVJOWwBE2UAH93Oa6IQWjGDyM+j7VQ1oIsqOfddWoNoAVYRdMoxO5Y/BUSNWZft1jkrtWjw5FywCNWOLG9jlal23Gtk7+3Nyx6dk8oB2Oir6N9qogW1ta8hKgSMutCPnaLbBw/U815mkrCBXA1iDkNXLm/Oi9JJjasQ0aHuklRLzqdSz1IrCkWj6AzEIpbaDjUYI9ZMDaHFG2PQgZvDQfY3NQGIootik5THJPd46SEa6q3MjZct5Tr6Ou6+oCwT+n7qRZl9shi901VH59i0F4CYpAEkCPO70iJEbELiVx2MWC41gqQAzJW7AQ/oVO4pVI2gkPx+FnoVRemLtp4if3kZ2ilIUqHYNrymnl/pq2hKZk53cAjYtCuuWbYduaYAhNbxmG6tQ8VQexmZEWpWXE//6P8sd612rtf2CbBKzUWfZ96Pykldr2+DSf7aMaR6LFW9HsIDiJgXDAzlM+rVW+I=
+  - secure: IJb2T03s8OjdraxqlFU0uy26oL5Qt7VRi/hLoYRzZLP8hPvazPgtoi3tRHPk+3uBy4UQmaHeUiCTUA5EUSXpfduiZgAlQY365wLE6GrDcwL82joJ06aBaAXCTuByzXL9CPmzWX2f2p36o3kg+DIv4nKccYbUdA2Ywnkvz2LihgQ1Im3udhclJuXyRlsXLVqmCherQHK8EjQe3T/LQjmQz0a0uew6cYM2weXrI7tfQIUulhgwQL4g4ESLN//dBRXR3U2plwyoEEmOj0so47Ns0oFNSoyWouImOLtM+B59b+teI+vEUYimVNPWZhjQXMQe3ilovEZE5uxzV7A9TheAtMH6H+x6LSC0O42H+xMONgdkewsw3ps7LEOnj6rfVtPFIiM3w40OLEAjVXYFGX2V05A9u94HMiBvmCbHPu21NvaZ3ewWMGnN4i2zIrDvfL6i2nwQb3KCKrUElwYKsPqrz/FkbeGtcAxEWSNNKlaiubv4VHPVg9J8UqsDSzd7Yqi0dMTQSvlBfjy0XiWf7OzJYf4Wt0IDHs63VQz8lPqxHqgrJerZz49ZyyI/ztMvARb8LCRS7q+9mAhKHILEe9DXZi1vqKBYgETvLvdnm58i7ELRLkFO7z4gaa6s0Zk39PitabQwzP0t9rkoAgkr3QnCcXwcJEcW11EdsJtFstmcgy8=
+  - secure: U+PTws6PiaTNHtE6fi8L1HUgMJljGUismdr3JPnr07TF8Ew7JwjUhtqomJtCkE7rrnv5WtUpZFSIz3dkQ1zmqB6Jeu8zMsxDNLteuQiXrh6+eO7Hq4XaxGaQLDH4KTvFtCUemYCw0NyjdgO0PMECTbCF6s1cYLDr1n1gMMpXHEg5MiDhAhGRaIz+xK0L+SGHQ8TFK657eLoIcESra4ZOoFugbVePtXqSlCzH/lqOTAp0cqyMJHjO+AGJf9yqbA5yYk28XXD8gaFuegW5Gw7K4yJy+obOW+KO6IOr8aTcmlJNeYzzciYwILLJr0SdVDV5v0KLW8hIBNFfNaMIgTSb9njDwJOvKtKxWyhX9zoDJ37/rX2rD1ts/PC7FwwoZvKOq3wJOZodODKy7cZHjxVh9nr5LoIGDP0qdyxBHE6VBw8Ndf0iwNeCHbZ2GEdcgVfx4lqeoRKtvKadCK++NXJ7oDMv7VivKSNC1ZQ12ELY3cNNiubBGAuxiI55Vm8YxuKhQ5GSmziCo0kezkUECqmekviQzhvwc10y4vVRg1RDIRAPAAKHniTE1axdutblyGVRuDjk9TNWP37q4M2V7jKPPEtpcSV5dROTQl9OKhmMAtI0UTWyLVJu15QNpvob734uz2fJJlHZXV/QNGC61kCXLTgytFK5kni6ZdaxTRz6838=
