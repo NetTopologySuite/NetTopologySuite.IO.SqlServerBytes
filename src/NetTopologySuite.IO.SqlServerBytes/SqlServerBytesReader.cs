@@ -124,35 +124,35 @@ namespace NetTopologySuite.IO
                 return null;
             }
 
-            var handleZ = _handleOrdinates.HasFlag(Ordinates.Z) && geography.ZValues.Count > 0;
-            var handleM = _handleOrdinates.HasFlag(Ordinates.M) && geography.MValues.Count > 0;
+            bool handleZ = _handleOrdinates.HasFlag(Ordinates.Z) && geography.ZValues.Count > 0;
+            bool handleM = _handleOrdinates.HasFlag(Ordinates.M) && geography.MValues.Count > 0;
 
             var factory = _services.CreateGeometryFactory(geography.SRID);
             var geometries = new Dictionary<int, Stack<Geometry>>();
-            var lastFigureIndex = geography.Figures.Count - 1;
-            var lastPointIndex = geography.Points.Count - 1;
+            int lastFigureIndex = geography.Figures.Count - 1;
+            int lastPointIndex = geography.Points.Count - 1;
 
-            for (var shapeIndex = geography.Shapes.Count - 1; shapeIndex >= 0; shapeIndex--)
+            for (int shapeIndex = geography.Shapes.Count - 1; shapeIndex >= 0; shapeIndex--)
             {
                 var shape = geography.Shapes[shapeIndex];
                 var figures = new Stack<CoordinateSequence>();
 
                 if (shape.FigureOffset != -1)
                 {
-                    for (var figureIndex = lastFigureIndex; figureIndex >= shape.FigureOffset; figureIndex--)
+                    for (int figureIndex = lastFigureIndex; figureIndex >= shape.FigureOffset; figureIndex--)
                     {
                         var figure = geography.Figures[figureIndex];
-                        var pointCount = figure.PointOffset != -1
+                        int pointCount = figure.PointOffset != -1
                             ? lastPointIndex + 1 - figure.PointOffset
                             : 0;
                         var coordinates = _sequenceFactory.Create(pointCount, _handleOrdinates);
 
                         if (pointCount != 0)
                         {
-                            for (var pointIndex = figure.PointOffset; pointIndex <= lastPointIndex; pointIndex++)
+                            for (int pointIndex = figure.PointOffset; pointIndex <= lastPointIndex; pointIndex++)
                             {
                                 var point = geography.Points[pointIndex];
-                                var coordinateIndex = pointIndex - figure.PointOffset;
+                                int coordinateIndex = pointIndex - figure.PointOffset;
 
                                 coordinates.SetOrdinate(coordinateIndex, Ordinate.X, IsGeography ? point.Long : point.X);
                                 coordinates.SetOrdinate(coordinateIndex, Ordinate.Y, IsGeography ? point.Lat : point.Y);

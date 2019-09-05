@@ -205,8 +205,8 @@ namespace NetTopologySuite.IO
             Ordinates handleOrdinates = Ordinates.XYZM,
             bool isGeography = false)
         {
-            var byteArray = new byte[bytes.Length / 2];
-            for (var i = 0; i < bytes.Length; i += 2)
+            byte[] byteArray = new byte[bytes.Length / 2];
+            for (int i = 0; i < bytes.Length; i += 2)
             {
                 byteArray[i / 2] = byte.Parse(bytes.Substring(i, 2), NumberStyles.HexNumber);
             }

@@ -48,20 +48,20 @@ namespace NetTopologySuite.IO.Serialization
                     geography.IsLargerThanAHemisphere = properties.HasFlag(SerializationProperties.IsLargerThanAHemisphere);
                 }
 
-                var numberOfPoints = properties.HasFlag(SerializationProperties.IsSinglePoint)
+                int numberOfPoints = properties.HasFlag(SerializationProperties.IsSinglePoint)
                     ? 1
                     : properties.HasFlag(SerializationProperties.IsSingleLineSegment)
                         ? 2
                         : reader.ReadInt32();
 
-                for (var i = 0; i < numberOfPoints; i++)
+                for (int i = 0; i < numberOfPoints; i++)
                 {
                     geography.Points.Add(Point.ReadFrom(reader));
                 }
 
                 if (properties.HasFlag(SerializationProperties.HasZValues))
                 {
-                    for (var i = 0; i < numberOfPoints; i++)
+                    for (int i = 0; i < numberOfPoints; i++)
                     {
                         geography.ZValues.Add(reader.ReadDouble());
                     }
@@ -69,13 +69,13 @@ namespace NetTopologySuite.IO.Serialization
 
                 if (properties.HasFlag(SerializationProperties.HasMValues))
                 {
-                    for (var i = 0; i < numberOfPoints; i++)
+                    for (int i = 0; i < numberOfPoints; i++)
                     {
                         geography.MValues.Add(reader.ReadDouble());
                     }
                 }
 
-                var hasSegments = false;
+                bool hasSegments = false;
 
                 if (properties.HasFlag(SerializationProperties.IsSinglePoint)
                     || properties.HasFlag(SerializationProperties.IsSingleLineSegment))
@@ -89,9 +89,9 @@ namespace NetTopologySuite.IO.Serialization
                 }
                 else
                 {
-                    var numberOfFigures = reader.ReadInt32();
+                    int numberOfFigures = reader.ReadInt32();
 
-                    for (var i = 0; i < numberOfFigures; i++)
+                    for (int i = 0; i < numberOfFigures; i++)
                     {
                         var figure = Figure.ReadFrom(reader);
 
@@ -124,9 +124,9 @@ namespace NetTopologySuite.IO.Serialization
                 }
                 else
                 {
-                    var numberOfShapes = reader.ReadInt32();
+                    int numberOfShapes = reader.ReadInt32();
 
-                    for (var i = 0; i < numberOfShapes; i++)
+                    for (int i = 0; i < numberOfShapes; i++)
                     {
                         geography.Shapes.Add(Shape.ReadFrom(reader));
                     }
@@ -134,9 +134,9 @@ namespace NetTopologySuite.IO.Serialization
 
                 if (hasSegments)
                 {
-                    var numberOfSegments = reader.ReadInt32();
+                    int numberOfSegments = reader.ReadInt32();
 
-                    for (var i = 0; i < numberOfSegments; i++)
+                    for (int i = 0; i < numberOfSegments; i++)
                     {
                         geography.Segments.Add(Segment.ReadFrom(reader));
                     }
@@ -199,12 +199,12 @@ namespace NetTopologySuite.IO.Serialization
                 point.WriteTo(writer);
             }
 
-            foreach (var z in ZValues)
+            foreach (double z in ZValues)
             {
                 writer.Write(z);
             }
 
-            foreach (var m in MValues)
+            foreach (double m in MValues)
             {
                 writer.Write(m);
             }
@@ -221,7 +221,7 @@ namespace NetTopologySuite.IO.Serialization
             {
                 // For version 1, we need to keep track of each figure's shape to determine whether a polygon's ring is
                 // internal or external
-                for (var shapeIndex = 0; shapeIndex < Shapes.Count; shapeIndex++)
+                for (int shapeIndex = 0; shapeIndex < Shapes.Count; shapeIndex++)
                 {
                     var shape = Shapes[shapeIndex];
                     if (shape.FigureOffset == -1 || shape.IsCollection())
@@ -229,13 +229,13 @@ namespace NetTopologySuite.IO.Serialization
                         continue;
                     }
 
-                    var nextShapeIndex = shapeIndex + 1;
+                    int nextShapeIndex = shapeIndex + 1;
                     while (nextShapeIndex < Shapes.Count && Shapes[nextShapeIndex].FigureOffset == -1)
                     {
                         nextShapeIndex++;
                     }
 
-                    var lastFigureIndex = nextShapeIndex >= Shapes.Count
+                    int lastFigureIndex = nextShapeIndex >= Shapes.Count
                         ? Figures.Count - 1
                         : Shapes[nextShapeIndex].FigureOffset - 1;
 
@@ -245,7 +245,7 @@ namespace NetTopologySuite.IO.Serialization
                         writer.Write((byte)LegacyFigureAttribute.ExteriorRing);
                         writer.Write(Figures[shape.FigureOffset].PointOffset);
 
-                        for (var figureIndex = shape.FigureOffset + 1; figureIndex <= lastFigureIndex; figureIndex++)
+                        for (int figureIndex = shape.FigureOffset + 1; figureIndex <= lastFigureIndex; figureIndex++)
                         {
                             writer.Write((byte)LegacyFigureAttribute.InteriorRing);
                             writer.Write(Figures[figureIndex].PointOffset);
@@ -254,7 +254,7 @@ namespace NetTopologySuite.IO.Serialization
                         continue;
                     }
 
-                    for (var figureIndex = shape.FigureOffset; figureIndex <= lastFigureIndex; figureIndex++)
+                    for (int figureIndex = shape.FigureOffset; figureIndex <= lastFigureIndex; figureIndex++)
                     {
                         writer.Write((byte)LegacyFigureAttribute.Stroke);
                         writer.Write(Figures[figureIndex].PointOffset);

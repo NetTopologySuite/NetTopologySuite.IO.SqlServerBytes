@@ -135,8 +135,8 @@ namespace NetTopologySuite.IO
             {
                 var (currentGeometry, parentOffset) = geometries.Dequeue();
 
-                var figureOffset = geography.Figures.Count;
-                var figureAdded = false;
+                int figureOffset = geography.Figures.Count;
+                bool figureAdded = false;
 
                 switch (currentGeometry)
                 {
@@ -189,8 +189,8 @@ namespace NetTopologySuite.IO
 
                 bool addFigure(Geometry g, FigureAttribute figureAttribute)
                 {
-                    var pointOffset = geography.Points.Count;
-                    var pointsAdded = false;
+                    int pointOffset = geography.Points.Count;
+                    bool pointsAdded = false;
 
                     foreach (var coordinate in g.Coordinates)
                     {
@@ -213,7 +213,7 @@ namespace NetTopologySuite.IO
 
                     if (_emitM)
                     {
-                        foreach (var m in g.GetOrdinates(Ordinate.M))
+                        foreach (double m in g.GetOrdinates(Ordinate.M))
                         {
                             geography.MValues.Add(m);
                         }
