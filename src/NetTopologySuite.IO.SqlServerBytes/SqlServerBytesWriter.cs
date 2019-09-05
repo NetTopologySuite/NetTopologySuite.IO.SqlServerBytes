@@ -207,19 +207,16 @@ namespace NetTopologySuite.IO
                         {
                             geography.ZValues.Add(coordinate.Z);
                         }
+
+                        if (_emitM)
+                        {
+                            geography.MValues.Add(coordinate.M);
+                        }
                     }
 
                     if (!pointsAdded)
                     {
                         return false;
-                    }
-
-                    if (_emitM)
-                    {
-                        foreach (double m in g.GetOrdinates(Ordinate.M))
-                        {
-                            geography.MValues.Add(m);
-                        }
                     }
 
                     geography.Figures.Add(
