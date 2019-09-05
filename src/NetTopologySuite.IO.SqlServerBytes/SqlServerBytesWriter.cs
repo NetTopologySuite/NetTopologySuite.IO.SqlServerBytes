@@ -24,9 +24,10 @@ namespace NetTopologySuite.IO
         private bool _emitM = true;
 
         /// <summary>
-        ///     Gets or sets the desired <see cref="ByteOrder"/>. Returns <see cref="ByteOrder.LittleEndian"/> since
+        ///     Gets or sets the desired <see cref="IO.ByteOrder"/>. Returns <see cref="ByteOrder.LittleEndian"/> since
         ///     it's required. Setting does nothing.
         /// </summary>
+        [Obsolete("This is unused within this library and will be removed in a later version.  It was only needed when this type implemented an interface that no longer exists.")]
         public virtual ByteOrder ByteOrder
         {
             get => ByteOrder.LittleEndian;
@@ -37,6 +38,7 @@ namespace NetTopologySuite.IO
         ///     Gets or sets whether the SpatialReference ID must be handled. Returns true since it's required. Setting
         ///     does nothing.
         /// </summary>
+        [Obsolete("This is unused within this library and will be removed in a later version.  It was only needed when this type implemented an interface that no longer exists.")]
         public virtual bool HandleSRID
         {
             get => true;
@@ -46,6 +48,7 @@ namespace NetTopologySuite.IO
         /// <summary>
         ///     Gets and <see cref="Ordinates"/> flag that indicate which ordinates can be handled.
         /// </summary>
+        [Obsolete("This is unused within this library and will be removed in a later version.  It was only needed when this type implemented an interface that no longer exists.")]
         public virtual Ordinates AllowedOrdinates
             => Ordinates.XYZM;
 
@@ -54,7 +57,7 @@ namespace NetTopologySuite.IO
         /// </summary>
         /// <remarks>
         ///     No matter which <see cref="Ordinates"/> flag you supply, <see cref="Ordinates.XY"/> are always
-        ///     processed, the rest is binary and 'ed with <see cref="AllowedOrdinates"/>.
+        ///     processed, the rest is binary and 'ed with <see cref="Ordinates.XYZM"/>.
         /// </remarks>
         public virtual Ordinates HandleOrdinates
         {

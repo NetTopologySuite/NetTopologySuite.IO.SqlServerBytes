@@ -5,8 +5,6 @@ using NetTopologySuite.Geometries.Implementation;
 using NetTopologySuite.IO.Properties;
 using Xunit;
 
-using GeoParseException = NetTopologySuite.IO.ParseException;
-
 namespace NetTopologySuite.IO
 {
     public class SqlServerBytesReaderTest
@@ -166,7 +164,7 @@ namespace NetTopologySuite.IO
         [Fact]
         public void Read_throws_when_circular_string()
         {
-            var ex = Assert.Throws<GeoParseException>(
+            var ex = Assert.Throws<ParseException>(
                 () => Read("0000000002040300000000000000000000000000000000000000000000000000F03F000000000000F03F0000000000000040000000000000000001000000020000000001000000FFFFFFFF0000000008"));
 
             Assert.Equal(string.Format(Resources.UnexpectedGeographyType, "CircularString"), ex.Message);
@@ -175,7 +173,7 @@ namespace NetTopologySuite.IO
         [Fact]
         public void Read_throws_when_compound_curve()
         {
-            var ex = Assert.Throws<GeoParseException>(
+            var ex = Assert.Throws<ParseException>(
                 () => Read("0000000002040400000000000000000000000000000000000000000000000000F03F00000000000000000000000000000040000000000000F03F0000000000000840000000000000000001000000030000000001000000FFFFFFFF0000000009020000000203"));
 
             Assert.Equal(string.Format(Resources.UnexpectedGeographyType, "CompoundCurve"), ex.Message);
@@ -184,7 +182,7 @@ namespace NetTopologySuite.IO
         [Fact]
         public void Read_throws_when_curve_polygon()
         {
-            var ex = Assert.Throws<GeoParseException>(
+            var ex = Assert.Throws<ParseException>(
                 () => Read("000000000204050000000000000000000040000000000000F03F000000000000F03F00000000000000400000000000000000000000000000F03F000000000000F03F00000000000000000000000000000040000000000000F03F01000000020000000001000000FFFFFFFF000000000A"));
 
             Assert.Equal(string.Format(Resources.UnexpectedGeographyType, "CurvePolygon"), ex.Message);
@@ -193,7 +191,7 @@ namespace NetTopologySuite.IO
         [Fact]
         public void Read_throws_when_full_globe()
         {
-            var ex = Assert.Throws<GeoParseException>(
+            var ex = Assert.Throws<ParseException>(
                 () => Read("E61000000224000000000000000001000000FFFFFFFFFFFFFFFF0B"));
 
             Assert.Equal(string.Format(Resources.UnexpectedGeographyType, "FullGlobe"), ex.Message);

@@ -5,8 +5,6 @@ using NetTopologySuite.Geometries.Implementation;
 using NetTopologySuite.IO.Properties;
 using Xunit;
 
-using GeoParseException = NetTopologySuite.IO.ParseException;
-
 namespace NetTopologySuite.IO
 {
     public class SqlServerBytesWriterTest
@@ -204,7 +202,7 @@ namespace NetTopologySuite.IO
             var reader = new WKTReader();
 
             // NB: If this doesn't throw, we're unblocked and can add support
-            Assert.Throws<GeoParseException>(
+            Assert.Throws<ParseException>(
                 () => reader.Read(wkt));
         }
 

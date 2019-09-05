@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.IO.Properties;
-using GeoParseException = NetTopologySuite.IO.ParseException;
 
 using Geography = NetTopologySuite.IO.Serialization.Geography;
 using OpenGisType = NetTopologySuite.IO.Serialization.OpenGisType;
@@ -44,6 +44,7 @@ namespace NetTopologySuite.IO
         ///     Gets or sets whether invalid linear rings should be fixed. Returns false since invalid rings are
         ///     disallowed. Setting does nothing.
         /// </summary>
+        [Obsolete("This is unused within this library and will be removed in a later version.  It was only needed when this type implemented an interface that no longer exists.")]
         public virtual bool RepairRings
         {
             get => false;
@@ -54,6 +55,7 @@ namespace NetTopologySuite.IO
         ///     Gets or sets whether the SpatialReference ID must be handled. Returns true since it's always handled.
         ///     Setting does nothing.
         /// </summary>
+        [Obsolete("This is unused within this library and will be removed in a later version.  It was only needed when this type implemented an interface that no longer exists.")]
         public virtual bool HandleSRID
         {
             get => true;
@@ -154,17 +156,17 @@ namespace NetTopologySuite.IO
                                 var point = geography.Points[pointIndex];
                                 int coordinateIndex = pointIndex - figure.PointOffset;
 
-                                coordinates.SetOrdinate(coordinateIndex, Ordinate.X, IsGeography ? point.Long : point.X);
-                                coordinates.SetOrdinate(coordinateIndex, Ordinate.Y, IsGeography ? point.Lat : point.Y);
+                                coordinates.SetX(coordinateIndex, IsGeography ? point.Long : point.X);
+                                coordinates.SetY(coordinateIndex, IsGeography ? point.Lat : point.Y);
 
                                 if (handleZ)
                                 {
-                                    coordinates.SetOrdinate(coordinateIndex, Ordinate.Z, geography.ZValues[pointIndex]);
+                                    coordinates.SetZ(coordinateIndex, geography.ZValues[pointIndex]);
                                 }
 
                                 if (handleM)
                                 {
-                                    coordinates.SetOrdinate(coordinateIndex, Ordinate.M, geography.MValues[pointIndex]);
+                                    coordinates.SetM(coordinateIndex, geography.MValues[pointIndex]);
                                 }
                             }
 
@@ -237,7 +239,7 @@ namespace NetTopologySuite.IO
                         break;
 
                     default:
-                        throw new GeoParseException(string.Format(Resources.UnexpectedGeographyType, shape.Type));
+                        throw new ParseException(string.Format(Resources.UnexpectedGeographyType, shape.Type));
                 }
 
                 if (!geometries.ContainsKey(shape.ParentOffset))
