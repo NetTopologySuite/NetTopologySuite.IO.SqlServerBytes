@@ -23,5 +23,10 @@ Write parameters like this.
 var geometry = new Point(-122.129797, 47.640049) { SRID = 4326 };
 var geometryWriter = new SqlServerBytesWriter { IsGeography = true };
 var bytes = geometryWriter.Write(geometry);
-command.Parameters.AddWithValue(parameterName, new SqlBytes(bytes));
+var parameter = command.Parameters
+    .AddWithValue(parameterName, new SqlBytes(bytes));
+
+// TODO: Set these if you're using Microsoft.Data.SqlClient
+//parameter.SqlDbType = SqlDbType.Udt;
+//parameter.UdtTypeName = "geography";
 ```
