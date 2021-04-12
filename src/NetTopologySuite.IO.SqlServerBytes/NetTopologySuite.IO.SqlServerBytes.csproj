@@ -19,8 +19,6 @@
     <PackageProjectUrl>https://github.com/NetTopologySuite/NetTopologySuite.IO.SqlServerBytes</PackageProjectUrl>
     <RepositoryUrl>https://github.com/NetTopologySuite/NetTopologySuite.IO.SqlServerBytes.git</RepositoryUrl>
     <PackageTags>NTS;MSSQL;SQLServer;SQL Server;SQL</PackageTags>
-    <PackageIconUrl>https://raw.githubusercontent.com/NetTopologySuite/GeoAPI/master/icon.png</PackageIconUrl>
-    <iconUrl>https://raw.githubusercontent.com/NetTopologySuite/GeoAPI/develop/icon.png</iconUrl>
   </PropertyGroup>
 
   <ItemGroup>
