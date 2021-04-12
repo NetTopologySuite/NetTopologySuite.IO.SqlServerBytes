@@ -40,6 +40,7 @@ namespace NetTopologySuite.IO
         [InlineData(
             "POLYGON EMPTY",
             "000000000104000000000000000001000000FFFFFFFFFFFFFFFF03")]
+        // 0xE61000000104000000000000000001000000FFFFFFFFFFFFFFFF03
         [InlineData(
             "POLYGON ((0 0, 0 1, 1 1, 0 0))",
             "00000000010404000000000000000000000000000000000000000000000000000000000000000000F03F000000000000F03F000000000000F03F0000000000000000000000000000000001000000020000000001000000FFFFFFFF0000000003")]
@@ -83,17 +84,19 @@ namespace NetTopologySuite.IO
             Assert.Equal(expected, Write(geometry));
         }
 
-        [Fact]
-        public void Read_works_when_IsGeography()
+        [Theory]
+        [InlineData("POINT (1 2)", "E6100000010C0000000000000040000000000000F03F")]
+        [InlineData("POLYGON EMPTY", "E61000000104000000000000000001000000FFFFFFFFFFFFFFFF03")]
+        public void Write_works_when_IsGeography(string wkt, string expectedHex)
         {
-            var geometry = new WKTReader().Read("POINT (1 2)");
+            var geometry = new WKTReader().Read(wkt);
             geometry.SRID = 4326;
 
-            Assert.Equal("E6100000010C0000000000000040000000000000F03F", Write(geometry, isGeography: true));
+            Assert.Equal(expectedHex, Write(geometry, isGeography: true));
         }
 
         [Fact]
-        public void Read_throws_when_IsGeography_and_shell_oriented_clockwise()
+        public void Write_throws_when_IsGeography_and_shell_oriented_clockwise()
         {
             var geometry = new WKTReader().Read("POLYGON ((0 0, 0 1, 1 1, 0 0))");
             geometry.SRID = 4326;
@@ -105,7 +108,7 @@ namespace NetTopologySuite.IO
         }
 
         [Fact]
-        public void Read_throws_when_IsGeography_and_hole_oriented_counter_clockwise()
+        public void Write_throws_when_IsGeography_and_hole_oriented_counter_clockwise()
         {
             var geometry = new WKTReader().Read("POLYGON ((0 0, 3 0, 3 3, 0 3, 0 0), (1 1, 2 1, 2 2, 1 2, 1 1))");
             geometry.SRID = 4326;

@@ -24,7 +24,7 @@ namespace NetTopologySuite.IO
         private bool _emitM = true;
 
         /// <summary>
-        ///     Gets or sets the desired <see cref="IO.ByteOrder"/>. Returns <see cref="ByteOrder.LittleEndian"/> since
+        ///     Gets or sets the desired <see cref="IO.ByteOrder"/>. Returns <see cref="IO.ByteOrder.LittleEndian"/> since
         ///     it's required. Setting does nothing.
         /// </summary>
         [Obsolete("This is unused within this library and will be removed in a later version.  It was only needed when this type implemented an interface that no longer exists.")]
@@ -150,6 +150,7 @@ namespace NetTopologySuite.IO
 
                     case Polygon polygon:
                         if (IsGeography
+                            && !polygon.IsEmpty
                             && !polygon.Shell.IsCCW)
                         {
                             throw new ArgumentException(Resources.InvalidGeographyShellOrientation);
