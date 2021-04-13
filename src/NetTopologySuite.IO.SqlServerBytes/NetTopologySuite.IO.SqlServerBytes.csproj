@@ -22,7 +22,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NetTopologySuite" Version="[2.0.0, 3.0.0-A)" />
+    <PackageReference Include="NetTopologySuite" Version="[2.1.0, 3.0.0-A)" />
   </ItemGroup>
 
   <ItemGroup>
@@ -38,6 +38,10 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Utility\" />
   </ItemGroup>
 
 </Project>
