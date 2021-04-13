@@ -4,7 +4,8 @@ using System.IO;
 using System.Linq;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.IO.Properties;
-
+using NetTopologySuite.IO.Utility;
+using NetTopologySuite.Operation.Valid;
 using Figure = NetTopologySuite.IO.Serialization.Figure;
 using FigureAttribute = NetTopologySuite.IO.Serialization.FigureAttribute;
 using Geography = NetTopologySuite.IO.Serialization.Geography;
@@ -131,8 +132,12 @@ namespace NetTopologySuite.IO
             var geography = new Geography
             {
                 SRID = Math.Max(0, geometry.SRID),
-                IsValid = geometry.IsValid
+                IsValid = CheckValid(geometry),
+                //IsLargerThanAHemisphere = 
             };
+
+            if (IsGeography)
+                geography.IsLargerThanAHemisphere = CheckLargerThanAHemisphere(geometry);
 
             while (geometries.Count > 0)
             {
@@ -254,5 +259,23 @@ namespace NetTopologySuite.IO
 
             return (OpenGisType)type;
         }
+
+        private static bool CheckValid(Geometry geometry)
+        {
+            // ToDo: Consider deriving special IsValidSqlServerOp class.
+            // #see issue gh issue #12
+            var isValidOp = new IsValidOp(geometry) {
+                IsSelfTouchingRingFormingHoleValid = true
+            };
+
+            return isValidOp.IsValid;
+        }
+
+        private static bool CheckLargerThanAHemisphere(Geometry geometry)
+        {
+            var ge = GeographyEnvelope.Compute(geometry);
+            return ge.Angle > 90d;
+        }
+
     }
 }
