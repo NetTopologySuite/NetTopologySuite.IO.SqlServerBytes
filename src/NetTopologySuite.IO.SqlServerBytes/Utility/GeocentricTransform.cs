@@ -1,4 +1,5 @@
 ﻿using System;
+using NetTopologySuite.Algorithm;
 
 namespace NetTopologySuite.IO.Utility
 {
@@ -43,7 +44,8 @@ namespace NetTopologySuite.IO.Utility
             {
                 default:
                 case 4326:
-                    return new GeocentricTransform(6378137, 6356752);
+                    return new GeocentricTransform(6378137, 6378137);
+                    //return new GeocentricTransform(6378137, 6356752);
             }
         }
 
@@ -86,8 +88,8 @@ namespace NetTopologySuite.IO.Utility
         /// <param name="height"></param>
         public (double x, double y, double z) GeodeticToGeocentric(double lon, double lat, double height)
         {
-            lon = ToRadians(lon);
-            lat = ToRadians(lat);
+            lon = AngleUtility.ToRadians(lon);
+            lat = AngleUtility.ToRadians(lat);
 
             /*
              * The function Convert_Geodetic_To_Geocentric converts geodetic coordinates
@@ -164,7 +166,7 @@ namespace NetTopologySuite.IO.Utility
                 {
                     lat = PI_OVER_2;
                     height = -_b;
-                    return (lon, ToDegrees(lat), height);
+                    return (lon, AngleUtility.ToDegrees(lat), height);
                 }
             }
             else
@@ -212,17 +214,7 @@ namespace NetTopologySuite.IO.Utility
             /*	ellipsoidal (geodetic) latitude */
             lat = Math.Atan(sinPhi / Math.Abs(cosPhi));
 
-            return (ToDegrees(lon), ToDegrees(lat), height);
-        }
-
-        private double ToRadians(double degrees)
-        {
-            return Math.PI * degrees / 180d;
-        }
-
-        private double ToDegrees(double radians)
-        {
-            return 180d * radians / Math.PI;
+            return (AngleUtility.ToDegrees(lon), AngleUtility.ToDegrees(lat), height);
         }
     }
 }

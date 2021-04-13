@@ -9,4 +9,8 @@
     <ProjectReference Include="$(SolutionDir)src\NetTopologySuite.IO.SqlServerBytes\NetTopologySuite.IO.SqlServerBytes.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Utility\" />
+  </ItemGroup>
+
 </Project>

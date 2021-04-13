@@ -11,9 +11,6 @@ namespace NetTopologySuite.IO.Utility
     /// </summary>
     internal struct GeographyEnvelope
     {
-        private Coordinate _center;
-        private double _angle;
-
         /// <summary>
         /// Computes the envelope of a geography
         /// </summary>
@@ -21,6 +18,9 @@ namespace NetTopologySuite.IO.Utility
         /// <returns>The envelope of a geography</returns>
         public static GeographyEnvelope Compute(Geometry geometry)
         {
+            if (geometry.IsEmpty)
+                return new GeographyEnvelope();
+
             var flt = new GeographyEnvelopeFilter(GeocentricTransform.CreateFor(geometry.SRID));
             geometry.Apply(flt);
             flt.Compute(out var coordinate, out double angle);
@@ -61,7 +61,7 @@ namespace NetTopologySuite.IO.Utility
 
                 for (int i = 0; i < count; i++)
                 {
-                    var xyz = _transform.GeodeticToGeocentric(seq.GetX(i), seq.GetY(i), 10000);
+                    var xyz = _transform.GeodeticToGeocentric(seq.GetX(i), seq.GetY(i), 0d);
                     _vectors.Add(new Vector3D(xyz.x, xyz.y, xyz.z));
                 }
             }
@@ -73,10 +73,20 @@ namespace NetTopologySuite.IO.Utility
             public void Compute(out CoordinateZ center, out double angle)
             {
                 // Build average center vector
-                var vCenter = new Vector3D(_vectors[0].X, _vectors[0].Y, _vectors[0].Z);
+                var vCenterX = new DD(_vectors[0].X);
+                var vCenterY = new DD(_vectors[0].Y);
+                var vCenterZ = new DD(_vectors[0].Z);
+                var divisor = new DD(_vectors.Count);
                 for (int i = 1; i < _vectors.Count; i++)
-                    vCenter.Add(_vectors[i]);
-                vCenter = vCenter.Divide(_vectors.Count);
+                {
+                    vCenterX += new DD(_vectors[i].X);
+                    vCenterY += new DD(_vectors[i].Y);
+                    vCenterZ += new DD(_vectors[i].Z);
+                }
+                var vCenter = new Vector3D(
+                    (vCenterX / divisor).ToDoubleValue(),
+                    (vCenterY / divisor).ToDoubleValue(),
+                    (vCenterZ / divisor).ToDoubleValue());
 
                 // look for max angle between center and vectors
                 angle = -double.MaxValue;
