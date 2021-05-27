@@ -123,6 +123,10 @@ namespace NetTopologySuite.IO
             {
                 return new Geography { SRID = -1 };
             }
+            if (geometry is UnsupportedGeometry unsupportedGeometry)
+            {
+                return unsupportedGeometry.Geography;
+            }
 
             var geometries = new Queue<(Geometry, int)>();
             geometries.Enqueue((geometry, -1));

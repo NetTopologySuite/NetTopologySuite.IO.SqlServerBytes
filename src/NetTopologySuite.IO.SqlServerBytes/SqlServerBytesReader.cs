@@ -238,6 +238,12 @@ namespace NetTopologySuite.IO
                         geometries.Remove(shapeIndex);
                         break;
 
+                    case OpenGisType.CircularString:
+                    case OpenGisType.CompoundCurve:
+                    case OpenGisType.CurvePolygon:
+                    case OpenGisType.FullGlobe:
+                        return new UnsupportedGeometry(shape.Type, geography);
+
                     default:
                         throw new ParseException(string.Format(Resources.UnexpectedGeographyType, shape.Type));
                 }

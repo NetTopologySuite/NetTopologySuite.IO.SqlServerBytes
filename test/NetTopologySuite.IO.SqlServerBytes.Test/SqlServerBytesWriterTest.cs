@@ -209,7 +209,7 @@ namespace NetTopologySuite.IO
                 () => reader.Read(wkt));
         }
 
-        private string Write(
+        public static string Write(
             Geometry geometry,
             Ordinates handleOrdinates = Ordinates.XYZM,
             bool isGeography = false)
