@@ -129,7 +129,10 @@ namespace NetTopologySuite.IO
             bool handleZ = _handleOrdinates.HasFlag(Ordinates.Z) && geography.ZValues.Count > 0;
             bool handleM = _handleOrdinates.HasFlag(Ordinates.M) && geography.MValues.Count > 0;
 
-            var factory = _services.CreateGeometryFactory(geography.SRID);
+            // TODO: Cache factories by SRID?
+            // TODO: Shouldn't this accept _services?
+            // TODO: Is arcSegmentLength the same as SQL Server's tolerance? Is this a good default?
+            var factory = new CurvedGeometryFactory(_services.DefaultPrecisionModel, geography.SRID, _services.DefaultCoordinateSequenceFactory, arcSegmentLength: 0.001);
             var geometries = new Dictionary<int, Stack<Geometry>>();
             int lastFigureIndex = geography.Figures.Count - 1;
             int lastPointIndex = geography.Points.Count - 1;
@@ -144,6 +147,7 @@ namespace NetTopologySuite.IO
                     for (int figureIndex = lastFigureIndex; figureIndex >= shape.FigureOffset; figureIndex--)
                     {
                         var figure = geography.Figures[figureIndex];
+                        // TODO: Handle Segments when FigureAttribute = Curve
                         int pointCount = figure.PointOffset != -1
                             ? lastPointIndex + 1 - figure.PointOffset
                             : 0;
@@ -237,6 +241,14 @@ namespace NetTopologySuite.IO
                                     : null);
                         geometries.Remove(shapeIndex);
                         break;
+
+                    case OpenGisType.CircularString:
+                        // TODO: Assert it's an Arc?
+                        geometry = factory.CreateCircularString(figures.SingleOrDefault());
+                        Debug.Assert(!geometries.ContainsKey(shapeIndex));
+                        break;
+
+                    // TODO: Handle CompoundCurve & CurvePolygon
 
                     default:
                         throw new ParseException(string.Format(Resources.UnexpectedGeographyType, shape.Type));
