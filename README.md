@@ -33,7 +33,7 @@ var parameter = command.Parameters
 
 ## Known limitations
 ### Validity
-SqlServer and NetTopologySuite have a slightly different notion of a geometries validity. SqlServer stores this
+SqlServer and NetTopologySuite have a slightly different notion of a geometry's validity. SqlServer stores this
 information along with the geometry data and the `SqlServerBytesWriter` uses NetTopologySuite's `Geometry.IsValid` value.
 You might get SqlServer geometries that return `STIsValid() = true` but `STIsValidReason() = false`.
 
@@ -41,13 +41,13 @@ You might get SqlServer geometries that return `STIsValid() = true` but `STIsVal
 SqlServer geography types include `FULLGLOBE`, basically a polygon where the globe is the outer ring (shell)
 and the interior rings (holes) define areas that are excluded. To achive this, SqlServer is rigid about
 ring orientations for geographies.
-Kind | req. Orientation
+Kind | requested Orientation
 --- | ---
 outer rings | **counter clockwise**
 inner rings | **clockwise**
   
 **This is _currently_ not representable using NetTopologySuite geometries** and the `SqlServerBytesWriter`
-throws an `ArgumentException` if writing a geometry is requested where the exterior ring is oriented **clockwise**.
+throws an `ArgumentException` if writing a geometry is requested that has an exterior ring oriented **clockwise**.
 
 #### Measures
 SqlServer geography types use the metric system for measures like length, distance and area.
