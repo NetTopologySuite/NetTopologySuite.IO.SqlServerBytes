@@ -22,7 +22,7 @@ namespace NetTopologySuite.IO
     {
         private bool _emitZ = true;
         private bool _emitM = true;
-
+        
         /// <summary>
         ///     Gets or sets the desired <see cref="IO.ByteOrder"/>. Returns <see cref="IO.ByteOrder.LittleEndian"/> since
         ///     it's required. Setting does nothing.
@@ -124,6 +124,12 @@ namespace NetTopologySuite.IO
                 return new Geography { SRID = -1 };
             }
 
+            // Check if geometry has z- or m-ordinate values
+            var checkZM = new CheckZMFilter();
+            geometry.Apply(checkZM);
+            bool emitZ = _emitZ & checkZM.HasZ;
+            bool emitM = _emitM & checkZM.HasM;
+
             var geometries = new Queue<(Geometry, int)>();
             geometries.Enqueue((geometry, -1));
 
@@ -140,7 +146,6 @@ namespace NetTopologySuite.IO
 
                 int figureOffset = geography.Figures.Count;
                 bool figureAdded = false;
-
                 switch (currentGeometry)
                 {
                     case Point point:
@@ -193,25 +198,30 @@ namespace NetTopologySuite.IO
 
                 bool addFigure(Geometry g, FigureAttribute figureAttribute)
                 {
+                    CoordinateSequence sequence;
+                    if (g is Point p) sequence = p.CoordinateSequence;
+                    else if (g is LineString l) sequence = l.CoordinateSequence;
+                    else throw new ArgumentException("Unexpected geometry type", nameof(g));
+
                     int pointOffset = geography.Points.Count;
                     bool pointsAdded = false;
 
-                    foreach (var coordinate in g.Coordinates)
+                    for (int i = 0; i < sequence.Count; i++)
                     {
                         geography.Points.Add(
                             IsGeography
-                                ? new SqlPoint { Long = coordinate.X, Lat = coordinate.Y }
-                                : new SqlPoint { X = coordinate.X, Y = coordinate.Y });
+                                ? new SqlPoint { Long = sequence.GetX(i), Lat = sequence.GetY(i) }
+                                : new SqlPoint { X = sequence.GetX(i), Y = sequence.GetY(i) });
                         pointsAdded = true;
 
-                        if (_emitZ)
+                        if (emitZ)
                         {
-                            geography.ZValues.Add(coordinate.Z);
+                            geography.ZValues.Add(sequence.GetZ(i));
                         }
 
-                        if (_emitM)
+                        if (emitM)
                         {
-                            geography.MValues.Add(coordinate.M);
+                            geography.MValues.Add(sequence.GetM(i));
                         }
                     }
 
@@ -231,16 +241,6 @@ namespace NetTopologySuite.IO
                 }
             }
 
-            if (geography.ZValues.All(double.IsNaN))
-            {
-                geography.ZValues.Clear();
-            }
-
-            if (geography.MValues.All(double.IsNaN))
-            {
-                geography.MValues.Clear();
-            }
-
             return geography;
         }
 
@@ -253,6 +253,44 @@ namespace NetTopologySuite.IO
             }
 
             return (OpenGisType)type;
+        }
+
+        /// <summary>
+        /// Filter class to evaluate if a geometry has z- and m-ordinate values.
+        /// </summary>
+        /// <remarks>Used <c>IGeometryComponentFilter</c> because <c>IEntireCoordinateSequence</c> is not available in NTS v2.0</remarks>
+        private class CheckZMFilter : IGeometryComponentFilter
+        {
+            /// <summary>
+            /// Geometry has z-ordinate values
+            /// </summary>
+            public bool HasZ { get; private set; }
+
+            /// <summary>
+            /// Geometry has m-ordinate values
+            /// </summary>
+            public bool HasM { get; private set; }
+
+            void IGeometryComponentFilter.Filter(Geometry geom)
+            {
+                CoordinateSequence seq = null;
+                switch (geom)
+                {
+                    case Point p:
+                        seq = p.CoordinateSequence;
+                        break;
+                    case LineString ls:
+                        seq = ls.CoordinateSequence;
+                        break;
+                }
+
+                // If we don't have a sequence we don't have anything to evaluate
+                if (seq == null) return;
+
+                // Update properties
+                if (seq.HasZ) HasZ = true;
+                if (seq.HasM) HasM = true;
+            }
         }
     }
 }
