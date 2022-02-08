@@ -1,19 +1,23 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26124.0
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetTopologySuite.IO.SqlServerBytes", "src\NetTopologySuite.IO.SqlServerBytes\NetTopologySuite.IO.SqlServerBytes.csproj", "{0402AAFA-DC37-4844-97E2-6205C5BE8882}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetTopologySuite.IO.SqlServerBytes", "src\NetTopologySuite.IO.SqlServerBytes\NetTopologySuite.IO.SqlServerBytes.csproj", "{0402AAFA-DC37-4844-97E2-6205C5BE8882}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetTopologySuite.IO.SqlServerBytes.Test", "test\NetTopologySuite.IO.SqlServerBytes.Test\NetTopologySuite.IO.SqlServerBytes.Test.csproj", "{D793B2F0-9612-4511-8932-D0D2028691AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetTopologySuite.IO.SqlServerBytes.Test", "test\NetTopologySuite.IO.SqlServerBytes.Test\NetTopologySuite.IO.SqlServerBytes.Test.csproj", "{D793B2F0-9612-4511-8932-D0D2028691AA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Items", "Items", "{6A5A94FB-AA3A-4EE4-ADBC-F9DF7D9829E5}"
+	ProjectSection(SolutionItems) = preProject
+		src\Directory.Build.props = src\Directory.Build.props
+		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{0402AAFA-DC37-4844-97E2-6205C5BE8882}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -24,5 +28,11 @@ Global
 		{D793B2F0-9612-4511-8932-D0D2028691AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D793B2F0-9612-4511-8932-D0D2028691AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D793B2F0-9612-4511-8932-D0D2028691AA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {00C34697-7D1D-4794-B3A0-7DE54D6654C5}
 	EndGlobalSection
 EndGlobal
