@@ -178,6 +178,8 @@ namespace NetTopologySuite.IO
                         }
                         break;
 
+                    // TODO: Handle CircularString, CompoundCurve & CurvePolygon
+
                     default:
                         throw new InvalidOperationException(
                             string.Format(Resources.UnexpectedGeometryType, geometry.GetType()));

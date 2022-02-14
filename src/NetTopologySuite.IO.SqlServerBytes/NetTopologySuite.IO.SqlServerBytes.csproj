@@ -22,7 +22,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NetTopologySuite" Version="[2.0.0, 3.0.0-A)" />
+    <ProjectReference Include="..\..\NetTopologySuite.Curved\src\NetTopologySuite.Curved\NetTopologySuite.Curved.csproj" />
   </ItemGroup>
 
   <ItemGroup>

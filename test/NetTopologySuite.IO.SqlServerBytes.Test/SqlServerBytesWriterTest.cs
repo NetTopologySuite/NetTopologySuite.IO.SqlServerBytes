@@ -77,9 +77,18 @@ namespace NetTopologySuite.IO
         [InlineData(
             "MULTIPOLYGON (((0 0, 0 1, 1 1, 0 0)))",
             "00000000010404000000000000000000000000000000000000000000000000000000000000000000F03F000000000000F03F000000000000F03F0000000000000000000000000000000001000000020000000002000000FFFFFFFF0000000006000000000000000003")]
+        [InlineData(
+            "CIRCULARSTRING (0 0, 1 1, 2 0)",
+            "0000000002040300000000000000000000000000000000000000000000000000F03F000000000000F03F0000000000000040000000000000000001000000020000000001000000FFFFFFFF0000000008")]
+        [InlineData(
+            "COMPOUNDCURVE ((0 0, 1 0), CIRCULARSTRING (1 0, 2 1, 3 0))",
+            "0000000002040400000000000000000000000000000000000000000000000000F03F00000000000000000000000000000040000000000000F03F0000000000000840000000000000000001000000030000000001000000FFFFFFFF0000000009020000000203")]
+        [InlineData(
+            "CURVEPOLYGON (CIRCULARSTRING (2 1, 1 2, 0 1, 1 0, 2 1))",
+            "000000000204050000000000000000000040000000000000F03F000000000000F03F00000000000000400000000000000000000000000000F03F000000000000F03F00000000000000000000000000000040000000000000F03F01000000020000000001000000FFFFFFFF000000000A")]
         public void Write_works(string wkt, string expected)
         {
-            var geometry = new WKTReader().Read(wkt);
+            var geometry = new WKTReaderEx().Read(wkt);
 
             Assert.Equal(expected, Write(geometry));
         }
@@ -89,7 +98,7 @@ namespace NetTopologySuite.IO
         [InlineData("POLYGON EMPTY", "E61000000104000000000000000001000000FFFFFFFFFFFFFFFF03")]
         public void Write_works_when_IsGeography(string wkt, string expectedHex)
         {
-            var geometry = new WKTReader().Read(wkt);
+            var geometry = new WKTReaderEx().Read(wkt);
             geometry.SRID = 4326;
 
             Assert.Equal(expectedHex, Write(geometry, isGeography: true));
@@ -98,7 +107,7 @@ namespace NetTopologySuite.IO
         [Fact]
         public void Write_throws_when_IsGeography_and_shell_oriented_clockwise()
         {
-            var geometry = new WKTReader().Read("POLYGON ((0 0, 0 1, 1 1, 0 0))");
+            var geometry = new WKTReaderEx().Read("POLYGON ((0 0, 0 1, 1 1, 0 0))");
             geometry.SRID = 4326;
 
             var ex = Assert.Throws<ArgumentException>(
@@ -110,7 +119,7 @@ namespace NetTopologySuite.IO
         [Fact]
         public void Write_throws_when_IsGeography_and_hole_oriented_counter_clockwise()
         {
-            var geometry = new WKTReader().Read("POLYGON ((0 0, 3 0, 3 3, 0 3, 0 0), (1 1, 2 1, 2 2, 1 2, 1 1))");
+            var geometry = new WKTReaderEx().Read("POLYGON ((0 0, 3 0, 3 3, 0 3, 0 0), (1 1, 2 1, 2 2, 1 2, 1 1))");
             geometry.SRID = 4326;
 
             var ex = Assert.Throws<ArgumentException>(
@@ -193,20 +202,6 @@ namespace NetTopologySuite.IO
             Assert.Equal(
                 "00000000010C000000000000F03F0000000000000040",
                 Write(point, Ordinates.XY));
-        }
-
-        [Theory]
-        [InlineData("CIRCULARSTRING (0 0, 1 1, 2 0)")]
-        [InlineData("COMPOUNDCURVE ((0 0, 1 0), CIRCULARSTRING (1 0, 2 1, 3 0))")]
-        [InlineData("CURVEPOLYGON (CIRCULARSTRING (2 1, 1 2, 0 1, 1 0, 2 1))")]
-        [InlineData("FULLGLOBE")]
-        public void Types_still_unknown(string wkt)
-        {
-            var reader = new WKTReader();
-
-            // NB: If this doesn't throw, we're unblocked and can add support
-            Assert.Throws<ParseException>(
-                () => reader.Read(wkt));
         }
 
         private string Write(

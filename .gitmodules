@@ -1,0 +1,3 @@
+[submodule "NetTopologySuite.Curved"]
+	path = NetTopologySuite.Curved
+	url = https://github.com/NetTopologySuite/NetTopologySuite.Curved.git
