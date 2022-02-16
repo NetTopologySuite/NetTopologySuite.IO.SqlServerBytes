@@ -24,15 +24,18 @@ namespace NetTopologySuite.IO
         /// <summary>
         ///     Initializes a new instance of the <see cref="SqlServerBytesReader"/> class.
         /// </summary>
+        /// <remarks>
+        ///     The current <see cref="NtsGeometryServices.Instance"/> will be used.
+        /// </remarks>
         public SqlServerBytesReader()
             : this(NtsGeometryServices.Instance)
         {
         }
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="SqlServerBytesReader"/> class.
+        ///     Initializes a new instance of the <see cref="SqlServerBytesReader"/> class using the provided <see cref="NtsGeometryServices"/> instance.
         /// </summary>
-        /// <param name="services"> The geometry services used to create <see cref="Geometry"/> instances. </param>
+        /// <param name="services"> The geometry services used to create <see cref="GeometryFactory"/> instances.</param>
         public SqlServerBytesReader(NtsGeometryServices services)
         {
             _services = services ?? NtsGeometryServices.Instance;
