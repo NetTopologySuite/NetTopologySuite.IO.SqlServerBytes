@@ -22,7 +22,7 @@ namespace NetTopologySuite.IO
     {
         private bool _emitZ = true;
         private bool _emitM = true;
-        
+
         /// <summary>
         ///     Gets or sets the desired <see cref="IO.ByteOrder"/>. Returns <see cref="IO.ByteOrder.LittleEndian"/> since
         ///     it's required. Setting does nothing.
@@ -88,6 +88,11 @@ namespace NetTopologySuite.IO
         public virtual bool IsGeography { get; set; }
 
         /// <summary>
+        /// Gets or sets a validator for a geometry. The result of this validator will be used to set the Valid flag of the Geography in SQL Server
+        /// </summary>
+        public virtual Func<Geometry, bool> GeometryValidator { get; set; } = geometry => geometry.IsValid;
+
+        /// <summary>
         ///     Writes a binary representation of a given geometry.
         /// </summary>
         /// <param name="geometry"> The geometry </param>
@@ -137,7 +142,7 @@ namespace NetTopologySuite.IO
             var geography = new Geography
             {
                 SRID = Math.Max(0, geometry.SRID),
-                IsValid = geometry.IsValid
+                IsValid = GeometryValidator(geometry)
             };
 
             while (geometries.Count > 0)
