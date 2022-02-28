@@ -22,6 +22,7 @@ namespace NetTopologySuite.IO
     {
         private bool _emitZ = true;
         private bool _emitM = true;
+        private Func<Geometry, bool> _customGgeometryFactory = default;
 
         /// <summary>
         ///     Gets or sets the desired <see cref="IO.ByteOrder"/>. Returns <see cref="IO.ByteOrder.LittleEndian"/> since
@@ -90,7 +91,11 @@ namespace NetTopologySuite.IO
         /// <summary>
         /// Gets or sets a validator for a geometry. The result of this validator will be used to set the Valid flag of the Geography in SQL Server
         /// </summary>
-        public virtual Func<Geometry, bool> GeometryValidator { get; set; } = geometry => geometry.IsValid;
+        public virtual Func<Geometry, bool> GeometryValidator
+        {
+            get => _customGgeometryFactory ?? new Func<Geometry, bool>(geomerty => geomerty.IsValid);
+            set => _customGgeometryFactory = value;
+        }
 
         /// <summary>
         ///     Writes a binary representation of a given geometry.
