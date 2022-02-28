@@ -91,7 +91,7 @@ namespace NetTopologySuite.IO
         /// <summary>
         /// Gets or sets a validator for a geometry. The result of this validator will be used to set the Valid flag of the Geography in SQL Server
         /// </summary>
-        public virtual Func<Geometry, bool> GeometryValidator
+        public Func<Geometry, bool> GeometryValidator
         {
             get => _customGgeometryFactory ?? new Func<Geometry, bool>(geomerty => geomerty.IsValid);
             set => _customGgeometryFactory = value;
