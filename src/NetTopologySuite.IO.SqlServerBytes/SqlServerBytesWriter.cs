@@ -1,10 +1,8 @@
-﻿using System;
+﻿using NetTopologySuite.Geometries;
+using NetTopologySuite.IO.Properties;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using NetTopologySuite.Geometries;
-using NetTopologySuite.IO.Properties;
-
 using Figure = NetTopologySuite.IO.Serialization.Figure;
 using FigureAttribute = NetTopologySuite.IO.Serialization.FigureAttribute;
 using Geography = NetTopologySuite.IO.Serialization.Geography;
@@ -22,7 +20,8 @@ namespace NetTopologySuite.IO
     {
         private bool _emitZ = true;
         private bool _emitM = true;
-        private Func<Geometry, bool> _customGgeometryFactory = default;
+        private Func<Geometry, bool> _geometryValidationFn;
+        private static readonly Func<Geometry, bool> DefaultGeometryValidationFn = (g) => g.IsValid;
 
         /// <summary>
         ///     Gets or sets the desired <see cref="IO.ByteOrder"/>. Returns <see cref="IO.ByteOrder.LittleEndian"/> since
@@ -93,8 +92,8 @@ namespace NetTopologySuite.IO
         /// </summary>
         public Func<Geometry, bool> GeometryValidator
         {
-            get => _customGgeometryFactory ?? new Func<Geometry, bool>(geomerty => geomerty.IsValid);
-            set => _customGgeometryFactory = value;
+            get => _geometryValidationFn ?? DefaultGeometryValidationFn;
+            set => _geometryValidationFn = value;
         }
 
         /// <summary>
