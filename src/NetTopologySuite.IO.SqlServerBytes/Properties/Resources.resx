@@ -138,4 +138,7 @@
   <data name="UnexpectedOgcGeometryType" xml:space="preserve">
     <value>Unsupported type: {0}</value>
   </data>
+  <data name="UnsupportedCurvedGeographyType" xml:space="preserve">
+    <value>Unsupported type: {0}. Geometries containing circular arc segments aren't supported. Consider using STCurveToLine in SQL to return a polygonal approximation instead.</value>
+  </data>
 </root>

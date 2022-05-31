@@ -167,7 +167,7 @@ namespace NetTopologySuite.IO
             var ex = Assert.Throws<ParseException>(
                 () => Read("0000000002040300000000000000000000000000000000000000000000000000F03F000000000000F03F0000000000000040000000000000000001000000020000000001000000FFFFFFFF0000000008"));
 
-            Assert.Equal(string.Format(Resources.UnexpectedGeographyType, "CircularString"), ex.Message);
+            Assert.Equal(string.Format(Resources.UnsupportedCurvedGeographyType, "CircularString"), ex.Message);
         }
 
         [Fact]
@@ -176,7 +176,7 @@ namespace NetTopologySuite.IO
             var ex = Assert.Throws<ParseException>(
                 () => Read("0000000002040400000000000000000000000000000000000000000000000000F03F00000000000000000000000000000040000000000000F03F0000000000000840000000000000000001000000030000000001000000FFFFFFFF0000000009020000000203"));
 
-            Assert.Equal(string.Format(Resources.UnexpectedGeographyType, "CompoundCurve"), ex.Message);
+            Assert.Equal(string.Format(Resources.UnsupportedCurvedGeographyType, "CompoundCurve"), ex.Message);
         }
 
         [Fact]
@@ -185,7 +185,7 @@ namespace NetTopologySuite.IO
             var ex = Assert.Throws<ParseException>(
                 () => Read("000000000204050000000000000000000040000000000000F03F000000000000F03F00000000000000400000000000000000000000000000F03F000000000000F03F00000000000000000000000000000040000000000000F03F01000000020000000001000000FFFFFFFF000000000A"));
 
-            Assert.Equal(string.Format(Resources.UnexpectedGeographyType, "CurvePolygon"), ex.Message);
+            Assert.Equal(string.Format(Resources.UnsupportedCurvedGeographyType, "CurvePolygon"), ex.Message);
         }
 
         [Fact]
