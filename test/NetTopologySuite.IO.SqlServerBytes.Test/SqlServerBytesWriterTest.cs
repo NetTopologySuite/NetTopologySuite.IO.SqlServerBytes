@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.Geometries.Implementation;
@@ -207,6 +208,23 @@ namespace NetTopologySuite.IO
             // NB: If this doesn't throw, we're unblocked and can add support
             Assert.Throws<ParseException>(
                 () => reader.Read(wkt));
+        }
+
+        [Fact, Description("Issue 31")]
+        public void Write_GC_with_MultiLineString_and_Polygon()
+        {
+            const string wkt = "GEOMETRYCOLLECTION(MULTILINESTRING((1530628.02 404991, 1530628.1038558017 404990.86079936905), (1530629.024093667 404991.44015993056, 1530628.39 404992.47)), POLYGON((1530627.5325 404990.8887, 1530627.6291 404991.3117, 1530628.02 404991.5, 1530628.4109 404991.3117, 1530628.4623315241 404991.08648742596, 1530627.7383391045 404990.6306784765, 1530627.5325 404990.8887)))";
+            var geom = new WKTReader().Read(wkt);
+
+            try
+            {
+                Write(geom, Ordinates.XY);
+                Assert.True(true);
+            }
+            catch
+            {
+                Assert.True(false);
+            }
         }
 
         private string Write(
