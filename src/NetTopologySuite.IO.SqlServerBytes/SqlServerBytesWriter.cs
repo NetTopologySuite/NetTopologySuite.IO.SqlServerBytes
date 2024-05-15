@@ -1,10 +1,8 @@
-﻿using System;
+﻿using NetTopologySuite.Geometries;
+using NetTopologySuite.IO.Properties;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using NetTopologySuite.Geometries;
-using NetTopologySuite.IO.Properties;
-
 using Figure = NetTopologySuite.IO.Serialization.Figure;
 using FigureAttribute = NetTopologySuite.IO.Serialization.FigureAttribute;
 using Geography = NetTopologySuite.IO.Serialization.Geography;
@@ -22,7 +20,9 @@ namespace NetTopologySuite.IO
     {
         private bool _emitZ = true;
         private bool _emitM = true;
-        
+        private Func<Geometry, bool> _geometryValidationFn;
+        private static readonly Func<Geometry, bool> DefaultGeometryValidationFn = (g) => g.IsValid;
+
         /// <summary>
         ///     Gets or sets the desired <see cref="IO.ByteOrder"/>. Returns <see cref="IO.ByteOrder.LittleEndian"/> since
         ///     it's required. Setting does nothing.
@@ -88,6 +88,15 @@ namespace NetTopologySuite.IO
         public virtual bool IsGeography { get; set; }
 
         /// <summary>
+        /// Gets or sets a validator for a geometry. The result of this validator will be used to set the Valid flag of the Geography in SQL Server
+        /// </summary>
+        public Func<Geometry, bool> GeometryValidator
+        {
+            get => _geometryValidationFn ?? DefaultGeometryValidationFn;
+            set => _geometryValidationFn = value;
+        }
+
+        /// <summary>
         ///     Writes a binary representation of a given geometry.
         /// </summary>
         /// <param name="geometry"> The geometry </param>
@@ -137,7 +146,7 @@ namespace NetTopologySuite.IO
             var geography = new Geography
             {
                 SRID = Math.Max(0, geometry.SRID),
-                IsValid = geometry.IsValid
+                IsValid = GeometryValidator(geometry)
             };
 
             while (geometries.Count > 0)
