@@ -31,6 +31,23 @@ var parameter = command.Parameters
 //parameter.UdtTypeName = "geography";
 ```
 
+### Curves
+SQL Server types containing circular arc segments (`CIRCULARSTRING`, `COMPOUNDCURVE` and `CURVEPOLYGON`) have no
+NetTopologySuite equivalent, and reading them throws a `ParseException` by default. Set `LinearizeCurves` to true
+to approximate them using `LineString` and `Polygon` values instead.
+
+``` csharp
+var geometryReader = new SqlServerBytesReader { LinearizeCurves = true };
+```
+
+The accuracy of the approximation is controlled by `MaxLinearizationAngle`, the maximum angle subtended by a
+single line segment when approximating an arc. Its default value (π/32) matches the granularity used by SQL
+Server's `STCurveToLine` method. The original points of an arc are always preserved, and Z and M values of
+inserted points are interpolated linearly. Arcs of geography data are approximated in longitude/latitude space,
+which differs slightly from `STCurveToLine`, which linearizes geography arcs on the ellipsoid.
+
+Writing curve geometries is not supported.
+
 ## Known limitations
 ### Validity
 SqlServer and NetTopologySuite have a slightly different notion of a geometry's validity. SqlServer stores this

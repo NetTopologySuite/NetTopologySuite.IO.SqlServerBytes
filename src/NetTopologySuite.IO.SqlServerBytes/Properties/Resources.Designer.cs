@@ -79,6 +79,15 @@ namespace NetTopologySuite.IO.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The GEOGRAPHY structure received contains malformed circular arc data and cannot be read..
+        /// </summary>
+        internal static string MalformedCurveData {
+            get {
+                return ResourceManager.GetString("MalformedCurveData", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   Looks up a localized string similar to The GEOGRAPHY structure received is incomplete and cannot be read..
         /// </summary>
         internal static string UnexpectedEndOfStream {
@@ -124,7 +133,7 @@ namespace NetTopologySuite.IO.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unsupported type: {0}. Geometries containing circular arc segments aren&apos;t supported. Consider using the STCurveToLine function in SQL to return a polygonal approximation instead..
+        ///   Looks up a localized string similar to Unsupported type: {0}. Geometries containing circular arc segments aren&apos;t supported. Set LinearizeCurves to true to approximate them using line segments, or use STCurveToLine in SQL to return a polygonal approximation instead..
         /// </summary>
         internal static string UnsupportedCurvedGeographyType {
             get {

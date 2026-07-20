@@ -123,6 +123,9 @@
   <data name="InvalidGeographyShellOrientation" xml:space="preserve">
     <value>When writing a SQL Server geography value, the shell of a polygon must be oriented counter-clockwise.</value>
   </data>
+  <data name="MalformedCurveData" xml:space="preserve">
+    <value>The GEOGRAPHY structure received contains malformed circular arc data and cannot be read.</value>
+  </data>
   <data name="UnexpectedEndOfStream" xml:space="preserve">
     <value>The GEOGRAPHY structure received is incomplete and cannot be read.</value>
   </data>
@@ -139,6 +142,6 @@
     <value>Unsupported type: {0}</value>
   </data>
   <data name="UnsupportedCurvedGeographyType" xml:space="preserve">
-    <value>Unsupported type: {0}. Geometries containing circular arc segments aren't supported. Consider using STCurveToLine in SQL to return a polygonal approximation instead.</value>
+    <value>Unsupported type: {0}. Geometries containing circular arc segments aren't supported. Set LinearizeCurves to true to approximate them using line segments, or use STCurveToLine in SQL to return a polygonal approximation instead.</value>
   </data>
 </root>
